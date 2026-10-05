@@ -1,0 +1,1964 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#1f5f8b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Vessel Inspection">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Vessel & Crew Inspection</title>
+<style>
+
+:root{
+  --bg:#f4f6f8;--panel:#fff;--line:#d9dee5;--text:#17202a;--muted:#66727f;
+  --accent:#1f5f8b;--accent2:#eaf3f9;--danger:#a52a2a;--ok:#27734d;--warn:#9a6b00;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--text);background:var(--bg)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.topbar{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:10px 14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.topbar .title{font-weight:700;margin-right:auto}
+.btn{border:1px solid #b9c3cd;background:#fff;border-radius:7px;padding:8px 12px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.danger{color:#fff;background:var(--danger);border-color:var(--danger)}
+.layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 58px)}
+.sidebar{border-right:1px solid var(--line);background:#fff;padding:12px;position:sticky;top:58px;height:calc(100vh - 58px);overflow:auto}
+.navbtn{display:block;width:100%;text-align:left;border:0;background:transparent;padding:9px 10px;border-radius:6px;margin-bottom:3px}
+ .navbtn:hover,.navbtn.active{background:var(--accent2);color:var(--accent);font-weight:600}
+.navbtn-inner{display:flex;align-items:center;gap:6px;width:100%}.navbtn-label{flex:1;min-width:0}.nav-section-state{font-size:12px;font-weight:700;min-width:18px;text-align:center}.nav-section-state.done{color:var(--ok)}.nav-section-state.attention{color:var(--warn)}.nav-section-state.none{color:#9aa3ad}.nav-section-state.na{color:#6b7280}.nav-summary{margin-top:12px;padding:9px 10px;border:1px solid var(--line);border-radius:7px;background:#fafbfc;line-height:1.55}.section-control{display:flex;align-items:center;gap:10px;margin-left:auto}.section-control label{font-size:12px;color:var(--muted);font-weight:600}.section-control select{border:1px solid #cbd3db;border-radius:6px;padding:7px;background:#fff;font-weight:600}.section-na-notice{padding:14px;background:#f5f6f8;border:1px solid var(--line);border-radius:8px;color:var(--muted);margin-top:14px}
+.content{padding:18px;max-width:1500px;width:100%;margin:auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h1,h2,h3{margin-top:0}
+h2{font-size:21px}
+h3{font-size:16px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600}
+.field input,.field select,.field textarea{width:100%;border:1px solid #cbd3db;border-radius:6px;padding:8px;background:#fff}
+.field textarea{min-height:74px;resize:vertical}
+.section-head{display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px}
+.section-head .section-no{font-size:13px;color:var(--muted);font-weight:700}
+.item{border:1px solid var(--line);border-radius:9px;margin:12px 0;background:#fff;overflow:hidden}
+.item-head{padding:12px;background:#fafbfc;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
+.item-id{font-weight:700;min-width:42px;color:var(--accent)}
+.item-title{font-weight:650;flex:1}
+.status{min-width:160px}
+.item-body{padding:12px}
+.guidance{background:#f3f7fa;border-left:4px solid var(--accent);padding:10px 12px;margin-bottom:12px;font-size:13px;line-height:1.45}
+.guidance b{color:var(--accent)}
+.item-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.item-fields .full{grid-column:1/-1}
+.photo-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.photos-edit{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:10px}
+.photo-edit{border:1px solid var(--line);border-radius:8px;padding:8px;background:#fafbfc}
+.photo-edit img{width:100%;height:160px;object-fit:contain;background:#eef1f4;border-radius:5px}
+.photo-meta{display:grid;gap:6px;margin-top:7px}
+.photo-meta input,.photo-meta select{width:100%;padding:6px;border:1px solid #cbd3db;border-radius:5px}
+.small{font-size:12px;color:var(--muted)}
+.progress{height:8px;background:#e7ebef;border-radius:20px;overflow:hidden;margin:7px 0 4px}
+.progress>div{height:100%;background:var(--accent);width:0}
+.badge{display:inline-block;padding:3px 7px;border-radius:20px;font-size:11px;border:1px solid var(--line)}
+.badge.ok{color:var(--ok)}.badge.warn{color:var(--warn)}.badge.bad{color:var(--danger)}
+.table-wrap{overflow:auto}
+table{border-collapse:collapse;width:100%;background:#fff}
+th,td{border:1px solid var(--line);padding:7px;vertical-align:top;font-size:12px}
+th{background:#f2f4f6;text-align:left}
+.notice{padding:10px 12px;background:#fff8df;border:1px solid #ead58b;border-radius:7px;font-size:13px;margin-bottom:12px}
+.offline-status{font-size:11px;font-weight:700;padding:5px 8px;border-radius:999px;border:1px solid #cbd3db;background:#f7fafc;color:var(--muted);white-space:nowrap}
+.offline-status.online{color:var(--ok);border-color:#9ac8ae;background:#f2faf5}
+.offline-status.offline{color:var(--warn);border-color:#dfc477;background:#fff9e8}
+.offline-status.ready{color:var(--ok);border-color:#9ac8ae;background:#f2faf5}
+
+.reference-suggestion{margin-top:6px;padding:7px 9px;border:1px solid #cbd3db;border-radius:6px;background:#f7fafc;font-size:12px;color:var(--muted)}
+.reference-suggestion strong{color:var(--accent)}
+.reference-library-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.reference-library-entry{border:1px solid var(--line);border-radius:8px;padding:12px;background:#fff;margin-bottom:10px}
+.reference-library-entry .ref-head{display:grid;grid-template-columns:1fr 2fr auto;gap:8px;align-items:start}
+.reference-library-entry textarea{min-height:58px}
+.reference-match{font-size:11px;color:var(--muted);margin-top:4px}
+@media(max-width:950px){.reference-library-entry .ref-head{grid-template-columns:1fr}}
+.cover-photo{max-width:360px;border:1px solid var(--line);padding:6px;border-radius:8px}
+.cover-photo img{display:block;width:100%;height:220px;object-fit:contain;background:#eef1f4}
+.start-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.start-box{max-width:620px;width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;padding:25px}
+.hidden{display:none!important}
+.no-print{}
+.print-ready{display:block!important}
+.print-only{display:none}.report-page,.report-page-header,.report-page-footer{display:none}
+.photo-pages{margin-top:15px}
+.photo-page{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:5mm;height:277mm;break-after:page;page-break-after:always}
+.photo-card{border:1px solid #bfc6cd;padding:4mm;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.photo-card .photo-image{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.photo-card img{width:100%;height:100%;object-fit:contain;display:block}
+.photo-caption{font-size:9pt;line-height:1.25;margin-top:2mm}
+.photo-caption strong{font-weight:700}
+.section-print{break-before:page;page-break-before:always}
+.section-print:first-child{break-before:auto;page-break-before:auto}
+.print-table td,.print-table th{font-size:8.5pt}
+.report-photo-title{font-size:14pt;font-weight:700;margin:7mm 0 4mm}
+@media(max-width:950px){
+  .layout{grid-template-columns:1fr}.sidebar{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .grid2,.grid3,.item-fields{grid-template-columns:1fr}
+  .status{min-width:0;width:100%}
+  .item-head{flex-wrap:wrap}
+}
+
+
+
+.cover-vessel-photo-wrap{margin:3mm 0 3mm;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.cover-vessel-photo-title{font-weight:700;font-size:8pt;margin-bottom:2mm}
+.cover-vessel-photo{border:0.3mm solid #777;display:flex;align-items:center;justify-content:center;overflow:hidden;box-sizing:border-box;flex:0 0 auto}
+.cover-vessel-photo.portrait{width:63.64mm;height:90mm}
+.cover-vessel-photo.landscape{width:127.28mm;height:90mm}
+.cover-vessel-photo.auto{width:127.28mm;height:90mm}
+.cover-vessel-photo img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
+@media print{
+  @page{size:A4 portrait;margin:0}
+  html,body{margin:0!important;padding:0!important;width:210mm!important;background:#fff!important;color:#000!important}
+  body{font-family:Arial,Helvetica,sans-serif!important}
+  .no-print,.topbar,.sidebar,.guidance,.statuses,.start-screen,.photo-toolbar,.screen-only,#screen{display:none!important}
+  .print-only{display:block!important}
+/* QHSE header/footer are generated only inside the print report.
+     They are normal-flow elements inside every physical A4 page.
+     Nothing is displayed in the browser inspection interface. */
+  #printReport{display:block!important;width:210mm!important;max-width:none!important;margin:0!important;padding:0!important}
+  #printReport>div{display:block!important;width:210mm!important;margin:0!important;padding:0!important}
+  .report-page{
+    display:grid!important;
+    grid-template-rows:14mm 1fr 11mm!important;
+    width:210mm!important;
+    height:297mm!important;
+    min-height:297mm!important;
+    max-height:297mm!important;
+    box-sizing:border-box!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:hidden!important;
+    background:#fff!important;
+    break-after:page!important;
+    page-break-after:always!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  .report-page:last-child{break-after:auto!important;page-break-after:auto!important}
+  .report-page-header{
+    display:flex!important;
+    width:210mm!important;
+    height:14mm!important;
+    box-sizing:border-box!important;
+    padding:2mm 8mm 1.5mm!important;
+    background:#fff!important;
+    border-bottom:.25mm solid #555!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    overflow:hidden!important;
+  }
+  .report-page-header .report-header-name{
+    display:block!important;
+    font-family:Arial,Helvetica,sans-serif!important;
+    font-size:11pt!important;
+    line-height:1!important;
+    font-weight:700!important;
+    letter-spacing:.2mm!important;
+    color:#111!important;
+    white-space:nowrap!important;
+  }
+  .report-page-header .report-header-title{display:none!important}
+  .report-page-body{
+    display:block!important;
+    width:194mm!important;
+    height:auto!important;
+    min-height:0!important;
+    box-sizing:border-box!important;
+    margin:0 8mm!important;
+    padding:0!important;
+    overflow:hidden!important;
+  }
+  .report-page-footer{
+    display:flex!important;
+    width:210mm!important;
+    height:11mm!important;
+    box-sizing:border-box!important;
+    padding:1.5mm 8mm!important;
+    margin:0!important;
+    background:#fff!important;
+    border-top:.25mm solid #555!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    font:7pt/1.15 Arial,Helvetica,sans-serif!important;
+    color:#111!important;
+    overflow:hidden!important;
+  }
+  .report-footer-left{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:.5mm!important;
+  }
+  .report-footer-code{font-weight:700!important}
+  .report-footer-note{font-size:6.5pt!important;font-style:italic!important}
+  .report-footer-page{font-weight:700!important;white-space:nowrap!important}
+  .layout,.content{display:block!important;width:210mm!important;max-width:none!important;margin:0!important;padding:0!important}
+  .section-print{display:block!important;width:194mm!important;box-sizing:border-box!important;margin:0!important;padding:4mm 0 3mm!important;break-before:auto!important;page-break-before:auto!important;break-inside:auto!important;page-break-inside:auto!important;overflow:visible!important}
+  .section-print:first-child{break-before:auto!important;page-break-before:auto!important}
+  .print-section-header{border-bottom:1px solid #000!important;padding-bottom:3mm!important;margin-bottom:4mm!important}
+  .print-section-header h2{margin:0!important;padding:0!important;text-align:left!important}
+  .print-table{display:table!important;width:194mm!important;margin:0!important;border-collapse:collapse!important;table-layout:auto!important}
+  .print-table th,.print-table td{box-sizing:border-box!important;border:1px solid #555!important;padding:1.5mm!important;font-size:11.0pt!important;line-height:1.15!important;vertical-align:top!important;overflow-wrap:break-word!important;word-break:normal!important;white-space:normal!important}
+  .print-table th{font-size:12.0pt!important}
+  /* Section checklist: N is only for numbering; Item is medium; Comments/Findings gets the main width. */
+  .section-checklist-table{table-layout:auto!important}
+  .section-checklist-table th:nth-child(1),.section-checklist-table td:nth-child(1){width:7mm!important;min-width:7mm!important;max-width:10mm!important;text-align:center!important;white-space:nowrap!important}
+  .section-checklist-table th:nth-child(2),.section-checklist-table td:nth-child(2){width:31%!important;min-width:48mm!important}
+  .section-checklist-table th:nth-child(3),.section-checklist-table td:nth-child(3){width:calc(69% - 7mm)!important;min-width:95mm!important}
+  .section-checklist-table tr{break-inside:avoid!important;page-break-inside:avoid!important}
+  .section-photo-block{display:block!important;position:relative!important;width:210mm!important;height:297mm!important;margin:0!important;padding:0!important;break-before:page!important;page-break-before:always!important;break-after:auto!important;page-break-after:auto!important;break-inside:avoid!important;page-break-inside:avoid!important;overflow:hidden!important}
+  .photo-sheet{position:relative!important;display:block!important;width:210mm!important;height:297mm!important;margin:0!important;padding:0!important;overflow:hidden!important}
+  .photo-card-abs{position:absolute!important;display:flex!important;flex-direction:column!important;box-sizing:border-box!important;border:.3mm solid #777!important;padding:3mm!important;margin:0!important;overflow:hidden!important;background:#fff!important;break-inside:avoid!important;page-break-inside:avoid!important}
+  /* Reserve a fixed caption area inside every photo card so the caption of the
+     lower row is never pushed into / hidden by the report footer. */
+  .photo-image-abs{width:100%!important;height:calc(100% - 24mm)!important;min-height:0!important;flex:0 0 calc(100% - 24mm)!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
+  .photo-image-abs img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center center!important}
+  .photo-caption-abs{width:100%!important;height:21mm!important;min-height:21mm!important;max-height:21mm!important;box-sizing:border-box!important;overflow:hidden!important;font:6.5pt/1.12 Arial,Helvetica,sans-serif!important;margin:2mm 0 0 0!important;padding:0!important}
+  .report-photo-title{display:none!important}
+  /* ---------- Report page 1 / INSPECTION SUMMARY ---------- */
+  .report-page.cover-report-page{
+    grid-template-rows:1fr 11mm!important;
+  }
+  .report-page.cover-report-page .report-page-body{
+    width:194mm!important;
+    margin:0 8mm!important;
+    padding:0!important;
+    overflow:hidden!important;
+  }
+  .inspection-summary-cover{
+    width:194mm!important;
+    height:282mm!important;
+    box-sizing:border-box!important;
+    padding:8mm 0 5mm!important;
+    overflow:hidden!important;
+  }
+  .inspection-summary-title{
+    margin:0!important;
+    padding:0 0 3mm!important;
+    border-bottom:.35mm solid #0057A8!important;
+    font:700 14pt/1 Arial,Helvetica,sans-serif!important;
+    letter-spacing:.2mm!important;
+    color:#111!important;
+  }
+  .inspection-summary-top{
+    display:grid!important;
+    grid-template-columns:105mm 1fr!important;
+    column-gap:8mm!important;
+    width:194mm!important;
+    margin-top:8mm!important;
+    min-height:148mm!important;
+    align-items:start!important;
+  }
+  .inspection-summary-photo{
+    width:105mm!important;
+    height:148mm!important;
+    box-sizing:border-box!important;
+    border:.3mm solid #777!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    overflow:hidden!important;
+    background:#fff!important;
+  }
+  .inspection-summary-photo.landscape{
+    width:105mm!important;
+    height:148mm!important;
+  }
+  .inspection-summary-photo.portrait{
+    width:105mm!important;
+    height:148mm!important;
+  }
+  .inspection-summary-photo img{
+    display:block!important;
+    width:auto!important;
+    height:auto!important;
+    max-width:100%!important;
+    max-height:100%!important;
+    object-fit:contain!important;
+  }
+  .inspection-summary-photo-empty{
+    font:8.5pt/1.2 Arial,Helvetica,sans-serif!important;
+    color:#777!important;
+    text-align:center!important;
+    padding:5mm!important;
+  }
+  .inspection-summary-facts{
+    border-left:.35mm solid #8aaed0!important;
+    padding-left:7mm!important;
+    box-sizing:border-box!important;
+    min-height:105mm!important;
+  }
+  .summary-fact{
+    padding:0 0 6mm!important;
+    margin:0 0 6mm!important;
+    border-bottom:.25mm solid #9bb9d4!important;
+  }
+  .summary-fact:last-child{margin-bottom:0!important}
+  .summary-fact-label{
+    display:block!important;
+    margin:0 0 2mm!important;
+    font:700 8pt/1.1 Arial,Helvetica,sans-serif!important;
+    color:#4f6d8c!important;
+    letter-spacing:.15mm!important;
+  }
+  .summary-fact-value{
+    display:block!important;
+    font:400 11.5pt/1.15 Arial,Helvetica,sans-serif!important;
+    color:#111!important;
+    overflow-wrap:anywhere!important;
+  }
+  .inspection-summary-lower{
+    margin-top:8mm!important;
+  }
+  .summary-text-block{
+    margin:0 0 7mm!important;
+  }
+  .summary-text-heading{
+    display:flex!important;
+    align-items:baseline!important;
+    gap:4mm!important;
+    margin:0 0 3mm!important;
+    padding:0 0 2mm!important;
+    border-bottom:.3mm solid #9bb9d4!important;
+  }
+  .summary-text-heading span{
+    font:700 10pt/1.1 Arial,Helvetica,sans-serif!important;
+    color:#111!important;
+    letter-spacing:.1mm!important;
+  }
+  .summary-text{
+    font:400 9.5pt/1.35 Arial,Helvetica,sans-serif!important;
+    color:#111!important;
+    white-space:pre-wrap!important;
+    overflow-wrap:break-word!important;
+  }
+
+  /* ---------- Report page 2 / VESSEL & CREW INFORMATION ---------- */
+  .vessel-crew-info-page{
+    width:194mm!important;
+    min-height:272mm!important;
+    box-sizing:border-box!important;
+    padding:5mm 0 3mm!important;
+    overflow:hidden!important;
+  }
+  .report-page-title{
+    margin:0!important;
+    padding:0 0 3mm!important;
+    border-bottom:.35mm solid #0057A8!important;
+    font:700 14pt/1 Arial,Helvetica,sans-serif!important;
+    letter-spacing:.2mm!important;
+    color:#111!important;
+  }
+  .info-block{
+    margin-top:8mm!important;
+  }
+  .info-block:first-of-type{margin-top:7mm!important}
+  .info-block-title{
+    margin:0 0 3mm!important;
+    padding:0!important;
+    font:700 10pt/1.1 Arial,Helvetica,sans-serif!important;
+    color:#17395f!important;
+    letter-spacing:.1mm!important;
+  }
+  .info-table{
+    width:194mm!important;
+    border-collapse:collapse!important;
+    table-layout:fixed!important;
+  }
+  .info-table th,.info-table td{
+    border:.25mm solid #b8c7d6!important;
+    padding:2mm 2.5mm!important;
+    vertical-align:middle!important;
+    font:400 9pt/1.15 Arial,Helvetica,sans-serif!important;
+    color:#111!important;
+    overflow-wrap:break-word!important;
+  }
+  .info-table th{
+    width:55mm!important;
+    background:#edf2f7!important;
+    color:#17395f!important;
+    font-weight:700!important;
+    text-align:left!important;
+    text-transform:uppercase!important;
+    font-size:8pt!important;
+  }
+  .info-table td{font-size:9.5pt!important}
+  .particulars-table th{width:42mm!important}
+  .particulars-table td{width:55mm!important}
+  .particulars-table th:nth-child(3){width:42mm!important}
+  .particulars-table td:nth-child(4){width:55mm!important}
+  .crew-table th:first-child{width:62mm!important}
+  .crew-table td{width:132mm!important}
+  .crew-table thead th{background:#e5edf5!important;font-size:8.5pt!important}
+  .crew-table tbody th{background:#edf2f7!important}
+
+  /* Cover: keep the complete title page strictly inside one A4 sheet. */
+  .report-cover{
+    padding:3mm 0 2mm!important;
+    height:100%!important;
+    min-height:0!important;
+    max-height:none!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+    break-after:auto!important;
+    page-break-after:auto!important;
+  }
+  .report-cover .print-section-header{
+    margin-bottom:2mm!important;
+    padding-bottom:2mm!important;
+  }
+  .report-cover .print-section-header h1{font-size:15pt!important;line-height:1.05!important}
+  .report-cover .print-section-header h2{font-size:11pt!important;margin-top:2mm!important}
+  .report-cover .cover-vessel-photo-wrap{margin:2mm 0 2mm!important}
+  .report-cover .cover-vessel-photo-title{font-size:7pt!important;margin-bottom:1mm!important}
+  .report-cover .cover-vessel-photo.portrait{width:63.64mm!important;height:90mm!important}
+  .report-cover .cover-vessel-photo.landscape,
+  .report-cover .cover-vessel-photo.auto{width:127.28mm!important;height:90mm!important}
+  .report-cover .cover-vessel-photo img{max-width:100%!important;max-height:100%!important;width:auto!important;height:auto!important}
+  .report-cover .print-table{width:194mm!important}
+  .report-cover .print-table th,.report-cover .print-table td{
+    font-size:5.5pt!important;
+    line-height:1.05!important;
+    padding:0.8mm!important;
+  }
+  .report-cover .cover-summary{margin-top:2mm!important}
+  .report-cover h3{font-size:8pt!important;margin:2mm 0 1mm!important}
+  .report-cover > div[style*="margin-top:8mm"],
+  .report-cover > div[style*="margin-top:7mm"]{margin-top:2mm!important}
+}
+
+</style>
+</head>
+<body>
+
+
+<div id="startScreen" class="start-screen">
+  <div class="start-box">
+    <h1>Vessel & Crew Inspection</h1>
+    <p class="small">Offline Safari-compatible inspection form.</p>
+    <div class="field">
+      <label>Vessel Name</label>
+      <input id="startVesselName" placeholder="Enter vessel name">
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+      <button class="btn primary" onclick="newInspection()">Start New Inspection</button>
+      <button class="btn" onclick="loadDemo()">Load Demo Data</button>
+      <button class="btn" onclick="document.getElementById('importInput').click()">Import Inspection</button>
+    </div>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <div class="topbar no-print">
+    <div class="title">Vessel & Crew Inspection</div>
+    <div id="offlineStatus" class="offline-status" role="status" aria-live="polite">Checking offline status…</div>
+    <button class="btn" onclick="saveLocal()">Save</button>
+    <button class="btn" onclick="exportJSON()">Export JSON</button>
+    <button class="btn" onclick="document.getElementById('importInput').click()">Import JSON</button>
+    <button class="btn primary" onclick="printReport()">Print / Save PDF</button>
+    <button class="btn danger" onclick="resetInspection()">Reset</button>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar no-print">
+      <button class="navbtn active" data-page="cover" onclick="showPage('cover')">Cover / Summary</button>
+      <div id="navSections"></div>
+      <div id="navSummary" class="nav-summary no-print"></div>
+      <button id="navReferenceLibrary" class="navbtn" data-page="reference-library" onclick="showPage('reference-library')">Reference Library</button>
+      <button class="navbtn" data-page="review" onclick="showPage('review')">Final Review / Recommendations</button>
+      <div style="margin-top:15px">
+        <div class="small">Inspection progress</div>
+        <div class="progress"><div id="progressBar"></div></div>
+        <div class="small" id="progressText">0 / 0</div>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div id="screen"></div>
+      <div id="printReport" class="print-only"></div>
+    </main>
+  </div>
+</div>
+
+<input id="importInput" type="file" accept=".json,application/json" class="hidden">
+<input id="coverPhotoInput" type="file" accept="image/*" capture="environment" class="hidden">
+
+<script>
+
+const LEGACY_STORAGE_KEY = "vesselCrewInspection_v4";
+const LEGACY_DB_NAME = "vesselCrewInspectionPhotos_v4";
+const DB_NAME = "vesselCrewInspection_v10";
+const DB_VERSION = 1;
+const PHOTO_STORE = "photos";
+const STATE_STORE = "state";
+const REFERENCE_LIBRARY_KEY = "vesselCrewInspection_referenceLibrary_v1";
+
+/* Built-in reference library. User-edited entries are stored separately from the inspection so
+   the library survives Start New Inspection / Reset. Matching is conservative: the system
+   suggests or fills a reference only for Observation / Deficiency items. */
+const DEFAULT_REFERENCE_LIBRARY = [
+  {id:"solas-ii2-10",sectionIds:"1,4,5,6,7",itemIds:"",keywords:"fire fighting equipment, fire main, fire pump, emergency fire pump, hydrant, hose, nozzle, extinguisher, fixed fire extinguishing, water spray, water mist, CO2, fire damper, fire door",exclusionKeywords:"lifeboat, lifejacket, navigation",reference:"SOLAS Ch. II-2 Reg. 10",priority:100},
+  {id:"solas-ii2-7",sectionIds:"4,6,7",itemIds:"",keywords:"fire detection, fire alarm, smoke detector, heat detector",exclusionKeywords:"navigation, radar",reference:"SOLAS Ch. II-2 Reg. 7",priority:90},
+  {id:"solas-iii-20",sectionIds:"3,4",itemIds:"",keywords:"lifeboat, rescue boat, liferaft, launching appliance, davit, lifebuoy, lifejacket, immersion suit, pyrotechnic",exclusionKeywords:"fire pump, fire main",reference:"SOLAS Ch. III Reg. 20",priority:100},
+  {id:"solas-iii-19",sectionIds:"3,4,9,10",itemIds:"",keywords:"muster list, emergency instructions, abandon ship drill, fire drill, drill",exclusionKeywords:"hours of rest, garbage",reference:"SOLAS Ch. III Reg. 19",priority:80},
+  {id:"solas-v-19",sectionIds:"2",itemIds:"",keywords:"navigation equipment, radar, ECDIS, echosounder, gyro, autopilot, bridge equipment",exclusionKeywords:"fire detection",reference:"SOLAS Ch. V Reg. 19",priority:100},
+  {id:"solas-v-27",sectionIds:"2",itemIds:"",keywords:"nautical charts, charts, nautical publications, electronic charts, ENC, publications",exclusionKeywords:"cargo securing",reference:"SOLAS Ch. V Reg. 27",priority:90},
+  {id:"solas-v-34",sectionIds:"2,9",itemIds:"",keywords:"passage plan, voyage plan, route planning, route check, no go area",exclusionKeywords:"fire drill",reference:"SOLAS Ch. V Reg. 34",priority:90},
+  {id:"solas-iv-13",sectionIds:"2",itemIds:"",keywords:"GMDSS, radio equipment, distress, VHF, MF HF, Inmarsat, EPIRB, SART, radio log",exclusionKeywords:"SSAS, security",reference:"SOLAS Ch. IV Reg. 13",priority:100},
+  {id:"solas-ii2-14",sectionIds:"1,4,5,6,7",itemIds:"",keywords:"operational readiness, maintenance, fire safety maintenance, testing fire equipment",exclusionKeywords:"oil record book, ballast water",reference:"SOLAS Ch. II-2 Reg. 14",priority:70},
+  {id:"solas-ii1-29",sectionIds:"2,7",itemIds:"",keywords:"steering gear, steering gear test, emergency steering",exclusionKeywords:"autopilot",reference:"SOLAS Ch. II-1 Reg. 29",priority:100},
+  {id:"solas-ii1-42",sectionIds:"6,7",itemIds:"",keywords:"emergency source of electrical power, emergency generator, emergency batteries",exclusionKeywords:"fire pump",reference:"SOLAS Ch. II-1 Reg. 42",priority:100},
+  {id:"solas-vi-5",sectionIds:"5",itemIds:"",keywords:"cargo securing manual, cargo securing, securing cargo, lashing, lashings",exclusionKeywords:"lifeboat",reference:"SOLAS Ch. VI Reg. 5",priority:100},
+  {id:"marpol-i-14",sectionIds:"6,7",itemIds:"",keywords:"oily water separator, 15 ppm, oil filtering equipment, bilge separator, 15ppm alarm",exclusionKeywords:"garbage, ballast",reference:"MARPOL Annex I Reg. 14",priority:120},
+  {id:"marpol-i-17",sectionIds:"1,7",itemIds:"",keywords:"oil record book, ORB, oil record book part I, oil operations",exclusionKeywords:"garbage record book",reference:"MARPOL Annex I Reg. 17",priority:110},
+  {id:"marpol-v-10",sectionIds:"4,5,6,7",itemIds:"",keywords:"garbage record book, garbage management, garbage placard, garbage",exclusionKeywords:"oil record book, ballast water",reference:"MARPOL Annex V Reg. 10",priority:100},
+  {id:"ism-6",sectionIds:"1,9,10",itemIds:"",keywords:"competence, familiarization, training, crew qualification, STCW, resources and personnel",exclusionKeywords:"cargo lashing",reference:"ISM Code Section 6",priority:90},
+  {id:"ism-7",sectionIds:"1,2,4,5,6,7,9",itemIds:"",keywords:"shipboard operations, operational procedures, checklist, routine operation, procedure",exclusionKeywords:"internal audit",reference:"ISM Code Section 7",priority:60},
+  {id:"ism-8",sectionIds:"1,3,4,6,7,9,10",itemIds:"",keywords:"emergency preparedness, emergency procedures, emergency response, drills, emergency",exclusionKeywords:"hours of rest",reference:"ISM Code Section 8",priority:70},
+  {id:"ism-10",sectionIds:"1,4,5,6,7",itemIds:"",keywords:"maintenance, PMS, planned maintenance, overdue maintenance, maintenance records",exclusionKeywords:"internal audit",reference:"ISM Code Section 10",priority:80},
+  {id:"ism-12",sectionIds:"1,10",itemIds:"",keywords:"verification, review and evaluation, internal audit, non conformity, corrective action",exclusionKeywords:"routine maintenance",reference:"ISM Code Section 12",priority:90},
+  {id:"ism-9",sectionIds:"1,9,10",itemIds:"",keywords:"reports, non conformities, accidents, hazardous situations, near miss, reporting",exclusionKeywords:"hours of rest",reference:"ISM Code Section 9",priority:80},
+  {id:"stcw-aviii1",sectionIds:"1,9",itemIds:"",keywords:"hours of rest, hours of work and rest, rest hours, fatigue, watch schedule",exclusionKeywords:"cargo watch",reference:"STCW Code Section A-VIII/1",priority:120},
+  {id:"stcw-aviii2",sectionIds:"2,9",itemIds:"",keywords:"watchkeeping, navigational watch, watchkeeping arrangements, bridge watch",exclusionKeywords:"rest hours",reference:"STCW Code Section A-VIII/2",priority:100},
+  {id:"colreg-5",sectionIds:"2,9",itemIds:"",keywords:"lookout, proper lookout, visual lookout, radar lookout",exclusionKeywords:"fire lookout",reference:"COLREG Rule 5",priority:110},
+  {id:"colreg-7",sectionIds:"2,9",itemIds:"",keywords:"risk of collision, radar plotting, ARPA, collision risk",exclusionKeywords:"radar maintenance",reference:"COLREG Rule 7",priority:110},
+  {id:"colreg-19",sectionIds:"2,9",itemIds:"",keywords:"restricted visibility, fog, poor visibility",exclusionKeywords:"fire",reference:"COLREG Rule 19",priority:110},
+  {id:"mlc-23",sectionIds:"1,9",itemIds:"",keywords:"hours of work and rest, seafarer rest, fatigue, working hours",exclusionKeywords:"watchkeeping equipment",reference:"MLC 2006 Regulation 2.3",priority:100},
+  {id:"isps-a9",sectionIds:"1,4,9,10",itemIds:"",keywords:"ship security plan, security, SSAS, security level, access control",exclusionKeywords:"safety plan, fire control plan",reference:"ISPS Code Part A Section 9",priority:100},
+  {id:"bwm-b2",sectionIds:"6,7",itemIds:"",keywords:"ballast water record book, ballast water management, ballast water",exclusionKeywords:"oil record book",reference:"BWM Convention Regulation B-2",priority:110},
+  {id:"fss-code-4",sectionIds:"4,6,7",itemIds:"",keywords:"fire detection and alarm system, fire detection system, fire alarm",exclusionKeywords:"GMDSS",reference:"FSS Code Ch. 4",priority:100},
+  {id:"fss-code-7",sectionIds:"4,6,7",itemIds:"",keywords:"fixed fire extinguishing system, water spray, water mist, CO2 system",exclusionKeywords:"lifeboat",reference:"FSS Code Ch. 7",priority:100}
+];
+
+let state = {
+  meta:{
+    vesselName:"",imo:"",portOfRegistry:"",shipType:"",flag:"",classSociety:"",
+    registeredOwner:"",technicalManager:"",shipbuilder:"",deliveryDate:"",
+    dwt:"",gt:"",nt:"",loa:"",breadth:"",depth:"",summerDraught:"",
+    master:"",chiefOfficer:"",chiefEngineer:"",secondEngineer:"",crewNationality:"",
+    inspectionPort:"",inspectionDate:"",inspector:"",status:"",auditDescription:"",
+    conclusion:"",vesselPhoto:null,coverPhotoFormat:"A5",coverPhotoOrientation:"auto",photoFormat:"A6",photoOrientation:"auto"
+  },
+  sectionStatus:{},
+  items:{}
+};
+const checklist = [
+  {no:1,title:"MASTER'S OFFICE — CERTIFICATES AND FOLDERS",items:[
+    ["1.1","Certificates","Verify statutory, class and trading certificates are valid, properly displayed/filed, and consistent with the vessel's actual particulars. Check expiry dates, endorsements and any conditions of class or statutory recommendations."],
+    ["1.2","Crew STCW Certificates","Verify officers' and ratings' certificates, endorsements and familiarization records. Check that certificates match rank, duties and vessel operations and that required training is current."],
+    ["1.3","SOPEP Contact List","Check SOPEP availability and current emergency contact details. Verify the Master and relevant officers know where the plan is kept and can explain the initial response and reporting chain."],
+    ["1.4","Emergency Preparedness (Drills & LSA/FFE PMS Records)","Review recent drills, emergency preparedness records and PMS entries for LSA/FFE. Verify drills are realistic, properly recorded and followed by corrective actions where weaknesses were identified."],
+    ["1.5","MLC Compliance – Rest & Work Hours, Salary Calculations, Allotments and Evidence of Crew Salary Payments","Check MLC-related compliance, including rest and work hours, salary calculations, allotments, and documentary evidence of crew salary payments and distributions."],
+    ["1.6","Flag Specific, PSC Latest Inspections","Review latest Flag, PSC and other relevant inspection reports. Verify deficiencies have been closed or are being controlled, and ask the Master to explain recurring or outstanding findings."]
+  ]},
+  {no:2,title:"BRIDGE AREA",items:[
+    ["2.1","Bridge Equipment (Radars, Echosounder, Gyro, Autopilot)","Check operational condition, alarms, displays and sensor inputs. Ask the responsible officer to demonstrate normal operation and explain failure/changeover arrangements."],
+    ["2.2","Nautical Publications (Paper & Digital)","Verify required publications are available, corrected and readily accessible. Check digital update status and arrangements for backup where applicable."],
+    ["2.3","Charts / ECDIS","Check required chart/ENC coverage, corrections and backup arrangements. Verify ECDIS safety settings, safety contour/depth, no-go areas, alarms and sensor inputs. Ask the 2/O to demonstrate route checking and explain failure/changeover arrangements."],
+    ["2.4","Magnetic Compass","Check condition, readability, deviation information and lighting. Verify the crew understand the relationship between magnetic and gyro headings and the action required if gyro information becomes unreliable."],
+    ["2.5","Lights / Shapes / Sound Signals","Verify navigation lights, shapes and sound signalling equipment are available and operational. Ask an officer to explain the applicable COLREG requirements for typical situations."],
+    ["2.6","GMDSS Equipment and Records","Check GMDSS equipment, batteries/power supply, tests, records and certificates. Verify watchkeeping arrangements and ask the responsible officer to demonstrate routine tests and emergency communication procedures."],
+    ["2.7","Fire Cabinet / Smoke Detector","Check bridge fire-fighting arrangements, detection indications and accessibility. Verify alarms are understood and that equipment is not obstructed or used for storage."]
+  ]},
+  {no:3,title:"LIFE SAVING APPLIANCES",items:[
+    ["3.1","Lifeboats","Verify general condition, readiness, equipment inventory, securing arrangements, launching arrangements and maintenance. Check that crew can explain their assigned duties and safe launching precautions."],
+    ["3.2","Lifeboat Engines","Check starting arrangements, fuel, cooling, controls, batteries and routine tests. Ask assigned crew to demonstrate or explain starting and emergency procedures."],
+    ["3.3","Launching Appliances","Inspect davits, winches, brakes, wires, limit devices and securing arrangements. Verify maintenance and that operating instructions are available and understood."],
+    ["3.4","Liferafts & HRU","Check servicing dates, securing arrangements, hydrostatic release units and accessibility. Verify correct installation and that the crew understand release/launching arrangements."],
+    ["3.5","Lifejackets / Immersion Suits","Check quantity, condition, sizes, lights/whistles and stowage. Verify accessibility and crew familiarization with correct donning and use."],
+    ["3.6","Lifebuoys","Check quantity, markings, lights, smoke signals and self-igniting arrangements as applicable. Verify correct distribution and unobstructed access."],
+    ["3.7","Pyrotechnics","Check quantities, expiry dates, stowage and condition. Verify inventory control and that crew understand the purpose and safe handling precautions."],
+    ["3.8","Muster Stations","Check signs, lighting, escape routes and muster information. Verify muster lists are current and crew know their assigned station and duties."],
+    ["3.9","LSA Drills / Maintenance / Familiarization","Review drill performance and PMS records. Interview crew on abandon-ship scenarios, communications, launching precautions and individual duties; assess practical understanding rather than memorized answers."]
+  ]},
+  {no:4,title:"ACCOMMODATION",items:[
+    ["4.1","Fire Doors","Randomly inspect at least five fire doors in different locations. Check self-closing devices, latches, condition, clearances and signs of wedging or unauthorized alteration."],
+    ["4.2","Fire-Fighting Equipment","Inspect portable extinguishers, fire hoses, nozzles, hydrants and other equipment for condition, accessibility, markings and service status. Check whether crew can select appropriate equipment for typical fire scenarios."],
+    ["4.3","Fire Control Plan & Muster Lists","Verify current plans/lists are posted where required and reflect actual arrangements. Check crew understanding of alarms, escape routes, fire parties and emergency duties."],
+    ["4.4","Signs / Placards","Check safety signs, escape route markings, mandatory notices and hazard warnings. Verify they are legible, correctly located and not obstructed."],
+    ["4.5","Emergency Lighting & Batteries","Check emergency lighting in representative locations and inspect battery/charging indications where accessible. Verify emergency lighting arrangements are maintained and tested."],
+    ["4.6","Sanitary Facilities","Inspect general hygiene, ventilation, hot/cold water and condition of sanitary spaces. Note defects that may affect crew welfare or safe living conditions."],
+    ["4.7","Garbage Disposal / MARPOL Annex V","Check segregation, labelling, storage and disposal arrangements. Verify records and crew awareness of prohibited discharges and applicable garbage management procedures."],
+    ["4.8","Hospital & Medical Chest","Check accessibility, inventory, expiry dates and storage of medicines and medical equipment. Ask the responsible person to explain routine checks and emergency medical arrangements."],
+    ["4.9","Provision Stores / Refrigeration","Check hygiene, segregation, temperatures, stock rotation and condition of stores/refrigeration spaces. Note any conditions affecting food safety."],
+    ["4.10","Galley","Inspect cleanliness, ventilation, cooking equipment, electrical/gas arrangements, fire protection and housekeeping. Verify emergency shut-off arrangements are understood."],
+    ["4.11","Crew Cabins / Living Spaces","Inspect representative cabins and common areas for cleanliness, ventilation, lighting, electrical safety, housekeeping and unauthorized modifications."],
+    ["4.12","Crew Welfare / Safety Awareness / Familiarization","During the tour, assess whether crew understand basic safety procedures, emergency signals, reporting channels, PPE expectations and relevant SMS requirements."]
+  ]},
+  {no:5,title:"DECK AREA",items:[
+    ["5.1","Deck Condition","Inspect decks, walkways, handrails, ladders, gratings and working areas for corrosion, damage, trip hazards, poor housekeeping and unsafe temporary arrangements."],
+    ["5.2","Mooring Equipment","Inspect winches, drums, brakes, lines, fairleads and fittings. Check condition, guarding, snap-back awareness, line management and safe mooring practices."],
+    ["5.3","Anchoring Equipment","Inspect windlass, chain, stoppers, hawse pipes, brake arrangements and visible chain condition. Ask crew to explain anchoring procedures and emergency precautions."],
+    ["5.4","Deck Machinery / Lifting Appliances","Check machinery, guards, brakes, limit devices, SWL markings, certificates and maintenance records. Verify operators understand safe working limits and pre-use checks."],
+    ["5.5","Cargo Holds / Hatch Covers","Inspect covers, cleats, gaskets, drains, securing arrangements and visible structure. Check operation, maintenance, watertight integrity and safe access."],
+    ["5.6","Pilot Boarding Arrangements","Verify pilot ladder, accommodation ladder, securing points, lighting, lifebuoy and access arrangements. Check rigging condition and crew understanding of pilot transfer precautions."],
+    ["5.7","Ventilation / Air Pipes / Manholes / Tank Openings","Inspect condition, closures, guards and identification. Check that openings are secured and that enclosed-space hazards are controlled."],
+    ["5.8","Fixed Fire-Extinguishing Installation","Check accessibility, condition, release arrangements, signage and inspection status. Verify crew understand the purpose and activation precautions."],
+    ["5.9","Fire Main / Fire-Fighting Equipment","Check hydrants, hoses, nozzles, isolating valves, pressure and accessibility. Verify fire pump arrangements and crew ability to identify appropriate emergency actions."],
+    ["5.10","Fixed Pressure Water-Spraying / Water-Mist Fire-Extinguishing System","Check system condition, controls, alarms, valves, signage and maintenance/testing records. Verify responsible crew understand activation and isolation arrangements."],
+    ["5.11","Fire Dampers / Quick Closing Devices","Inspect accessibility, identification, operating condition and maintenance records. Verify remote controls are clearly marked and crew know their purpose."],
+    ["5.12","Signs / Fire Safety Maintenance / PMS","Check fire safety signs, equipment identification and maintenance status. Review PMS for overdue tasks and verify defects are controlled and closed appropriately."]
+  ]},
+  {no:6,title:"WORKING SPACES",items:[
+    ["6.1","Workshop","Check housekeeping, tools, guards, ventilation, electrical arrangements and storage. Verify hot-work equipment and PPE are controlled and maintained."],
+    ["6.2","Enclosed Space Entry","Verify procedures, permits, atmosphere testing equipment, rescue arrangements and crew familiarization. Ask a practical scenario question covering isolation, testing, standby and rescue."],
+    ["6.3","Hot Work","Check permit-to-work controls, fire watch, gas testing where applicable, isolation, combustible material control and post-work fire watch."],
+    ["6.4","Electrical Safety","Inspect distribution boards, cables, portable equipment, covers, labels and unauthorized modifications. Verify safe isolation/LOTO arrangements are understood."],
+    ["6.5","Machinery Guards","Check rotating/moving machinery guards and protective devices. Identify missing, damaged or bypassed guards and assess whether crew recognize associated hazards."],
+    ["6.6","SOPEP Locker / Pollution Response Equipment","Check inventory, accessibility, condition and identification. Verify crew can locate spill response equipment and explain the immediate response to an oil spill."],
+    ["6.7","Emergency Fire Pump Space","Check access, lighting, ventilation, equipment condition and readiness. Verify starting arrangements and crew familiarization."],
+    ["6.8","Emergency Generator Space","Inspect generator, fuel, ventilation, batteries/starting arrangements, lighting and housekeeping. Verify routine tests and emergency changeover arrangements."],
+    ["6.9","Emergency Battery Room","Check condition, ventilation, battery security, terminals, signs and charging arrangements. Verify emergency power maintenance/testing records."]
+  ]},
+  {no:7,title:"ENGINE ROOM",items:[
+    ["7.1","General Condition","Assess housekeeping, accessibility, lighting, ventilation, leaks, insulation, guards and general machinery condition. Look for repeated defects indicating weak maintenance control."],
+    ["7.2","Main Engine","Check general condition, alarms, trips, leakage, operating parameters and maintenance status. Ask engineering officers to explain critical failure scenarios and emergency shutdown arrangements."],
+    ["7.3","Generators","Check condition, load sharing, alarms, trips, fuel/lube leakage and maintenance. Verify standby generator readiness and emergency power arrangements."],
+    ["7.4","Fuel / Lubricating Oil Leakage","Inspect pumps, pipes, flanges, filters, tanks and machinery for leaks or temporary repairs. Assess fire and pollution risks and whether defects are entered into PMS/defect reporting."],
+    ["7.5","Bilge / Pollution Prevention","Check bilge arrangements, save-alls, drip trays, valves and housekeeping. Verify controls preventing overboard pollution and crew understanding of response to leakage."],
+    ["7.6","Sewage Treatment System","Verify operational condition, alarms, maintenance, discharge arrangements and records. Check that operation is consistent with applicable requirements."],
+    ["7.7","Oily Water Separator / 15 ppm Alarm Arrangements","Check the oily water separator and associated 15 ppm alarm arrangements, including equipment condition, operating instructions, maintenance and records. Verify the alarm, automatic stopping/diverting arrangement, seals/settings and testing records. Confirm responsible engineers can explain the correct lawful operating sequence, the required response to an alarm, and the consequences of bypassing or tampering with pollution-prevention controls."],
+    ["7.8","Oil Record Book","Review entries for completeness, consistency and chronological sequence. Cross-check representative operations against equipment/maintenance records and interview the responsible officer."],
+    ["7.9","Boilers / Thermal Oil","Check condition, alarms, safety valves, controls, leakage and maintenance. Verify operating limits and emergency procedures are understood."],
+    ["7.10","Pumps / Compressors / Pressure Systems","Inspect general condition, guards, pressure indicators, relief arrangements, leaks and maintenance status. Check safe operating procedures and certificates where applicable."],
+    ["7.11","Steering Gear","Inspect steering gear space, pumps, controls, alarms, emergency steering arrangements and communication. Verify required tests are recorded and crew know emergency changeover procedures."],
+    ["7.12","Fire-Fighting / Emergency Arrangements","Check emergency fire pump, fire hoses, extinguishers, escape routes and emergency controls. Verify accessibility and crew familiarization with emergency response."],
+    ["7.13","Fixed CO2 Fire-Fighting System","Check bottle room, cylinders, release arrangements, alarms, ventilation, signage and inspection status. Verify crew understand the pre-release precautions and evacuation requirements."],
+    ["7.14","Fire Safety Signs / Emergency Exit / Lighting / Batteries / Doors / Dampers","Inspect emergency exits, lighting, signs, batteries, fire doors and dampers. Check accessibility and maintenance/testing records."],
+    ["7.15","Alarms / Trips / Safety Devices","Review alarms, shutdowns, trips and safety devices. Verify testing records and ask engineers to explain the response to representative alarms/failures."],
+    ["7.16","UMS","Verify UMS watchkeeping arrangements, alarm response, call-out procedures and records. Ask the responsible engineer to explain how unattended machinery space operations are controlled."],
+    ["7.17","PMS","Review maintenance status, overdue jobs, critical equipment and defect history. Assess whether PMS is actively used to control equipment condition rather than only to close paperwork."]
+  ]},
+  {no:8,title:"HULL — EXTERNAL STRUCTURE",items:[
+    ["8.1","Gangway / Accommodation Ladder","Inspect condition, securing, handrails, steps, safety net, lighting and access arrangements. Verify safe rigging and use."],
+    ["8.2","Shell Plating / External Structure","Inspect accessible areas for corrosion, deformation, cracks, coating failure and temporary repairs. Note conditions requiring class/technical follow-up."],
+    ["8.3","Draft / Load Line Marks","Check visibility, accuracy and condition of draft/load line marks and associated markings. Verify they are consistent with vessel documentation."]
+  ]},
+  {no:9,title:"INTERVIEW WITH CREW DURING TOUR THROUGH",items:[
+    ["9.1","Rating Interview","Ask practical questions relevant to the rating's duties, emergency responsibilities, PPE, permits, reporting and SMS. Assess understanding, not memorization; note communication and willingness to stop unsafe work."],
+    ["9.2","Officer Interview","Ask scenario-based questions relevant to the officer's assigned responsibilities. Assess competence, decision-making, risk awareness, communication, documentation and application of SMS procedures."],
+    ["9.3","Senior Officer / Master Interview","Assess command leadership, risk assessment, crew management, emergency preparedness, reporting culture, compliance and ability to identify/control operational risks. Use practical scenarios rather than only theoretical questions."]
+  ]},
+  {no:10,title:"SAFETY MEETING WITH CREW AFTER AUDIT",items:[
+    ["10.1","Post-Audit Safety Meeting","Present key findings clearly, distinguish observations from deficiencies, invite crew concerns and verify understanding of corrective actions. Discuss Toolbox Talk expectations, SMS procedures, lessons learned and measures required to prevent recurrence."]
+  ]}
+];
+const photoURLs = new Map();
+let currentPage = "cover";
+let dbPromise = null;
+
+function uid(){
+  return Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-5);
+}
+function escapeHTML(v){
+  return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+
+/* ---------- IndexedDB v10 ---------- */
+function openDB(name=DB_NAME,version=DB_VERSION){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(name,version);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains(PHOTO_STORE)) db.createObjectStore(PHOTO_STORE,{keyPath:"id"});
+      if(!db.objectStoreNames.contains(STATE_STORE)) db.createObjectStore(STATE_STORE,{keyPath:"id"});
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error||new Error("IndexedDB open failed"));
+  });
+}
+function openPhotoDB(){
+  if(dbPromise)return dbPromise;
+  dbPromise=openDB();
+  return dbPromise;
+}
+async function getStateFromDB(db){
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(STATE_STORE,"readonly");
+    const req=tx.objectStore(STATE_STORE).get("current");
+    req.onsuccess=()=>resolve(req.result?.state||null);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function getBlobFromDB(db,id){
+  if(!id)return null;
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,"readonly");
+    const req=tx.objectStore(PHOTO_STORE).get(id);
+    req.onsuccess=()=>resolve(req.result?.blob||null);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function copyLegacyPhotos(oldDb,newDb,sourceState){
+  const ids=new Set();
+  for(const it of Object.values(sourceState?.items||{})) for(const p of (it.photos||[])) if(p?.id) ids.add(p.id);
+  if(sourceState?.meta?.vesselPhoto?.id) ids.add(sourceState.meta.vesselPhoto.id);
+  for(const id of ids){
+    const blob=await getBlobFromDB(oldDb,id);
+    if(blob){
+      await new Promise((resolve,reject)=>{
+        const tx=newDb.transaction(PHOTO_STORE,"readwrite");
+        tx.objectStore(PHOTO_STORE).put({id,blob});
+        tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+      });
+    }
+  }
+}
+async function putPhotoOptimized(id,blob){
+  if(!blob) throw new Error('Empty photograph.');
+  return putPhotoBlob(id,blob);
+}
+async function putPhotoBlob(id,blob){
+  const db=await openPhotoDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,"readwrite");
+    tx.objectStore(PHOTO_STORE).put({id,blob});
+    tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+  });
+}
+async function getPhotoBlob(id){
+  const db=await openPhotoDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,"readonly");
+    const req=tx.objectStore(PHOTO_STORE).get(id);
+    req.onsuccess=()=>resolve(req.result?.blob||null);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function deletePhotoBlob(id){
+  if(!id)return;
+  const db=await openPhotoDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,"readwrite");
+    tx.objectStore(PHOTO_STORE).delete(id);
+    tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+  });
+}
+function releaseURL(id){
+  const u=photoURLs.get(id);
+  if(u){URL.revokeObjectURL(u);photoURLs.delete(id);}
+}
+async function photoURL(id){
+  if(!id)return "";
+  if(photoURLs.has(id))return photoURLs.get(id);
+  // iPhone/Safari fallback: photographs may be stored directly in the inspection state
+  // as compressed JPEG data URLs. This avoids relying on IndexedDB Blob transactions.
+  for(const it of Object.values(state.items||{})){
+    for(const p of (Array.isArray(it.photos)?it.photos:[])){
+      if(p && p.id===id && p.src && String(p.src).startsWith("data:image/")) return p.src;
+    }
+  }
+  if(state.meta?.vesselPhoto?.id===id && state.meta.vesselPhoto.src) return state.meta.vesselPhoto.src;
+  const blob=await getPhotoBlob(id).catch(()=>null);
+  if(!blob)return "";
+  const u=URL.createObjectURL(blob);
+  photoURLs.set(id,u);
+  return u;
+}
+
+/* ---------- Persistent inspection state ---------- */
+function cloneState(){ return JSON.parse(JSON.stringify(state)); }
+async function saveStateDB(){
+  const db=await openPhotoDB();
+  const snapshot=cloneState();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(STATE_STORE,"readwrite");
+    tx.objectStore(STATE_STORE).put({id:"current",state:snapshot});
+    tx.oncomplete=resolve;
+    tx.onerror=()=>reject(tx.error||new Error("IndexedDB state save failed"));
+    tx.onabort=()=>reject(tx.error||new Error("IndexedDB state save aborted"));
+  });
+}
+let saveTimer=null;
+let saveChain=Promise.resolve();
+let saveInProgress=false;
+function scheduleSave(delay=500){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{saveNow(false)},delay);
+}
+async function saveNow(show=true){
+  clearTimeout(saveTimer);
+  saveChain=saveChain.then(async()=>{
+    saveInProgress=true;
+    await saveStateDB();
+    saveInProgress=false;
+    if(show) alert("Inspection saved. Text data and photographs are stored in IndexedDB.");
+  }).catch(err=>{
+    saveInProgress=false;
+    console.error(err);
+    if(show) alert("Unable to save inspection. Browser storage may be unavailable or full.");
+  });
+  return saveChain;
+}
+function saveLocal(show=true){return saveNow(show)}
+function saveStateQuiet(){scheduleSave()}
+
+function initItems(){
+  checklist.forEach(s=>s.items.forEach(x=>{
+    if(!state.items[x[0]]) state.items[x[0]]={
+      id:x[0],text:x[1],guidance:x[2],status:"",disabled:false,comments:"",findings:[""],
+      recommendations:[{reference:"",status:"OPEN",action:"",completion:""}],
+      reference:"",action:"",recommendationStatus:"OPEN",completion:"",photos:[]
+    };
+  }));
+}
+
+/* Migration from previous versions, including base64 photos */
+async function migrate(d){
+  const out=JSON.parse(JSON.stringify(d||{}));
+  out.meta=Object.assign({},state.meta,out.meta||{});
+  out.sectionStatus=Object.assign({},state.sectionStatus||{},out.sectionStatus||{});
+  out.items=out.items||{};
+
+  /* FIXED18: Section 7 combines legacy items 7.7 (Oily Water Separator) and
+     7.8 (15 ppm Alarm Arrangements) into one item 7.7, then renumbers the
+     following Engine Room items. Preserve existing inspection data. */
+  {
+    const mergeItemData=(a,b)=>{
+      if(!a) return b ? JSON.parse(JSON.stringify(b)) : null;
+      if(!b) return JSON.parse(JSON.stringify(a));
+      const merged=JSON.parse(JSON.stringify(a));
+      const ca=String(a.comments||'').trim();
+      const cb=String(b.comments||'').trim();
+      if(ca && cb && ca!==cb) merged.comments=ca+'\n\n'+cb;
+      else merged.comments=ca||cb;
+      merged.findings=[String(merged.comments||'')];
+      const ra=Array.isArray(a.recommendations)?a.recommendations:[];
+      const rb=Array.isArray(b.recommendations)?b.recommendations:[];
+      merged.recommendations=[...ra,...rb].map(r=>({reference:String(r?.reference||''),status:String(r?.status||r?.recommendationStatus||'OPEN'),action:String(r?.action||''),completion:String(r?.completion||'')}));
+      if(!merged.recommendations.length){
+        const legacy=[a,b].map(x=>({reference:String(x?.reference||''),status:String(x?.recommendationStatus||'OPEN'),action:String(x?.action||''),completion:String(x?.completion||'')}));
+        merged.recommendations=legacy;
+      }
+      return merged;
+    };
+    const old77=out.items['7.7'], old78=out.items['7.8'];
+    if(old77 || old78) out.items['7.7']=mergeItemData(old77,old78);
+    const renumber={
+      '7.9':'7.8','7.10':'7.9','7.11':'7.10','7.12':'7.11','7.13':'7.12',
+      '7.14':'7.13','7.15':'7.14','7.16':'7.15','7.17':'7.16','7.18':'7.17'
+    };
+    Object.entries(renumber).forEach(([from,to])=>{
+      if(out.items[from]){ out.items[to]=out.items[from]; out.items[to].id=to; }
+    });
+    Object.keys(renumber).forEach(from=>{ delete out.items[from]; });
+    /* Legacy 7.8 was merged into new 7.7 before the renumbering above. */
+  }
+
+  for(const s of checklist){
+    for(const x of s.items){
+      const old=out.items[x[0]];
+      if(!old){
+        out.items[x[0]]={
+          id:x[0],text:x[1],guidance:x[2],status:"",comments:"",findings:[""],
+          recommendations:[{reference:"",status:"OPEN",action:"",completion:""}],
+          reference:"",action:"",recommendationStatus:"OPEN",completion:"",photos:[]
+        };
+        continue;
+      }
+      old.id=x[0];old.text=x[1];old.guidance=x[2];
+      old.disabled=old.disabled===true;
+      /* FIXED16 data model: one Finding / Comment per item, with multiple Recommendations.
+         Preserve all legacy FIXED15 data by collapsing legacy multiple findings into one comment
+         and moving the old recommendation fields into Recommendation 1. */
+      if(!Array.isArray(old.findings)){ old.findings=[String(old.comments||"")]; }
+      old.findings=old.findings.map(v=>String(v??""));
+      if(!String(old.comments||"").trim()) old.comments=old.findings.filter(v=>v.trim()).join("\n\n");
+      old.findings=[String(old.comments||"")];
+
+      const legacyRec={
+        reference:String(old.reference||""),
+        status:String(old.recommendationStatus||"OPEN"),
+        action:String(old.action||""),
+        completion:String(old.completion||"")
+      };
+      if(legacyRec.status==="PENDING"||legacyRec.status==="FOLLOW-UP REQUIRED") legacyRec.status="OPEN";
+      if(!Array.isArray(old.recommendations)||!old.recommendations.length){
+        old.recommendations=[legacyRec];
+      }else{
+        old.recommendations=old.recommendations.map(r=>({
+          reference:String(r?.reference||""),
+          status:String(r?.status||r?.recommendationStatus||"OPEN"),
+          action:String(r?.action||""),
+          completion:String(r?.completion||"")
+        }));
+        if(!old.recommendations.length) old.recommendations=[legacyRec];
+      }
+      old.recommendations.forEach(r=>{if(r.status==="PENDING"||r.status==="FOLLOW-UP REQUIRED")r.status="OPEN";});
+      /* Keep legacy scalar fields synchronized for compatibility with older JSON files. */
+      const r0=old.recommendations[0]||legacyRec;
+      old.reference=r0.reference; old.action=r0.action; old.recommendationStatus=r0.status; old.completion=r0.completion;
+      old.photos=Array.isArray(old.photos)?old.photos:[];
+
+      if(old.photo && !old.photos.length){
+        old.photos=[{id:uid(),src:old.photo,description:"",location:"",
+          format:out.meta.photoFormat||"A6",orientation:out.meta.photoOrientation||"auto"}];
+      }
+
+      const newPhotos=[];
+      for(const p0 of old.photos){
+        const p=typeof p0==="string"
+          ? {id:uid(),src:p0,description:"",location:"",format:out.meta.photoFormat||"A6",orientation:out.meta.photoOrientation||"auto"}
+          : Object.assign({id:uid(),description:"",location:"",format:out.meta.photoFormat||"A6",orientation:out.meta.photoOrientation||"auto"},p0);
+
+        if(p.src && !p.blobStored){
+          try{
+            const blob=await dataURLToBlob(p.src);
+            await putPhotoBlob(p.id,blob);
+            delete p.src;
+            p.blobStored=true;
+          }catch(e){
+            /* Never write legacy base64 back into persistent state after a failed migration. */
+            delete p.src;
+            p.blobStored=false;
+            p.storageError=true;
+          }
+        }
+        newPhotos.push(p);
+      }
+      old.photos=newPhotos;
+      delete old.photo;
+    }
+  }
+
+  /* Legacy vessel photo */
+  if(out.meta.vesselPhoto?.src && !out.meta.vesselPhoto.blobStored){
+    try{
+      const id=out.meta.vesselPhoto.id||uid();
+      await putPhotoBlob(id,await dataURLToBlob(out.meta.vesselPhoto.src));
+      out.meta.vesselPhoto={id,description:out.meta.vesselPhoto.description||"",blobStored:true};
+    }catch(e){}
+  }
+  return out;
+}
+function dataURLToBlob(dataURL){
+  return new Promise((resolve,reject)=>{
+    try{
+      const parts=dataURL.split(",");
+      const mime=(parts[0].match(/:(.*?);/)||[])[1]||"image/jpeg";
+      const bin=atob(parts[1]);
+      const arr=new Uint8Array(bin.length);
+      for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+      resolve(new Blob([arr],{type:mime}));
+    }catch(e){reject(e)}
+  });
+}
+async function loadState(){
+  try{
+    const db=await openPhotoDB();
+    const saved=await getStateFromDB(db);
+    if(saved){
+      state=await migrate(saved);
+      initItems();
+      await saveStateDB();
+      return true;
+    }
+  }catch(e){console.warn("v10 state load failed",e)}
+
+  /* Migrate v9/v8 IndexedDB state and photographs into v10. */
+  try{
+    const oldDb=await openDB(LEGACY_DB_NAME,2);
+    const legacyState=await getStateFromDB(oldDb);
+    if(legacyState){
+      const newDb=await openPhotoDB();
+      await copyLegacyPhotos(oldDb,newDb,legacyState);
+      state=await migrate(legacyState);
+      initItems();
+      await saveStateDB();
+      try{oldDb.close()}catch(e){}
+      try{indexedDB.deleteDatabase(LEGACY_DB_NAME)}catch(e){}
+      return true;
+    }
+    try{oldDb.close()}catch(e){}
+    try{indexedDB.deleteDatabase(LEGACY_DB_NAME)}catch(e){}
+  }catch(e){console.warn("Legacy IndexedDB migration failed",e)}
+
+  /* Migrate the original localStorage backup if present. */
+  try{
+    const raw=localStorage.getItem(LEGACY_STORAGE_KEY);
+    if(!raw)return false;
+    state=await migrate(JSON.parse(raw));
+    initItems();
+    await saveStateDB();
+    try{localStorage.removeItem(LEGACY_STORAGE_KEY)}catch(e){}
+    return true;
+  }catch(e){
+    console.warn("Legacy localStorage migration failed",e);
+    return false;
+  }
+}
+
+async function deleteDatabaseAsync(name){
+  return new Promise(resolve=>{
+    try{
+      const req=indexedDB.deleteDatabase(name);
+      req.onsuccess=()=>resolve(true);
+      req.onerror=()=>resolve(false);
+      req.onblocked=()=>resolve(false);
+    }catch(e){resolve(false)}
+  });
+}
+
+async function clearInspectionStorage(){
+  // Stop any pending autosave before deleting the current inspection.
+  clearTimeout(saveTimer);
+  saveTimer=null;
+  try{await saveChain}catch(e){}
+
+  try{
+    const db=await openPhotoDB();
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction([STATE_STORE,PHOTO_STORE],"readwrite");
+      tx.objectStore(STATE_STORE).clear();
+      tx.objectStore(PHOTO_STORE).clear();
+      tx.oncomplete=resolve;
+      tx.onerror=()=>reject(tx.error||new Error("IndexedDB clear failed"));
+      tx.onabort=()=>reject(tx.error||new Error("IndexedDB clear aborted"));
+    });
+    try{db.close()}catch(e){}
+    dbPromise=null;
+  }catch(e){
+    console.warn("Current inspection storage clear failed",e);
+    throw e;
+  }
+
+  try{localStorage.removeItem(LEGACY_STORAGE_KEY)}catch(e){}
+  await deleteDatabaseAsync(LEGACY_DB_NAME);
+}
+
+/* ---------- Item photograph capture / upload ---------- */
+function compressImage(file,maxSide=1280,quality=.62){
+  return new Promise((resolve,reject)=>{
+    if(!file || !String(file.type||'').startsWith('image/')){reject(new Error('Selected file is not an image.'));return;}
+    const url=URL.createObjectURL(file);
+    const img=new Image();
+    img.onload=()=>{
+      try{
+        const w=img.naturalWidth||img.width, h=img.naturalHeight||img.height;
+        if(!w||!h)throw new Error('Image dimensions unavailable.');
+        const scale=Math.min(1,maxSide/Math.max(w,h));
+        const cw=Math.max(1,Math.round(w*scale)), ch=Math.max(1,Math.round(h*scale));
+        const canvas=document.createElement('canvas');
+        canvas.width=cw;canvas.height=ch;
+        const ctx=canvas.getContext('2d',{alpha:false});
+        if(!ctx)throw new Error('Canvas is unavailable.');
+        ctx.fillStyle='#fff';ctx.fillRect(0,0,cw,ch);
+        ctx.drawImage(img,0,0,cw,ch);
+        canvas.toBlob(blob=>{
+          URL.revokeObjectURL(url);
+          if(!blob){reject(new Error('Image conversion failed.'));return;}
+          resolve({blob,width:cw,height:ch});
+        },'image/jpeg',quality);
+      }catch(err){URL.revokeObjectURL(url);reject(err)}
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('The selected image cannot be read by Safari.'))};
+    img.src=url;
+  });
+}
+
+function triggerItemPhoto(itemId,takePhoto){
+  const input=document.getElementById('photoInput-'+itemId);
+  if(!input)return;
+  input.accept='image/*';
+  input.multiple=!takePhoto;
+  if(takePhoto) input.setAttribute('capture','environment');
+  else input.removeAttribute('capture');
+  input.onchange=()=>handleItemPhotoFiles(itemId,input.files);
+  input.click();
+}
+
+async function handleItemPhotoFiles(itemId,fileList){
+  const it=state.items[itemId];
+  if(!it || !fileList || !fileList.length)return;
+  const files=Array.from(fileList);
+  try{
+    for(const f of files){
+      let result;
+      try{ result=await compressImage(f,800,.48); }
+      catch(firstErr){
+        // Last-resort read path for Safari camera/Photos results.
+        result=await new Promise((resolve,reject)=>{
+          const reader=new FileReader();
+          reader.onload=()=>{
+            const src=String(reader.result||'');
+            if(!src.startsWith('data:image/')){reject(new Error('Safari returned an unreadable image.'));return;}
+            resolve({dataURL:src,width:0,height:0});
+          };
+          reader.onerror=()=>reject(reader.error||new Error('Photo file could not be read.'));
+          reader.readAsDataURL(f);
+        });
+      }
+      const id=uid();
+      let src=result.dataURL;
+      if(!src){
+        src=await new Promise((resolve,reject)=>{
+          const reader=new FileReader();
+          reader.onload=()=>resolve(String(reader.result||''));
+          reader.onerror=()=>reject(reader.error||new Error('Photo conversion failed.'));
+          reader.readAsDataURL(result.blob);
+        });
+      }
+      if(!src || !src.startsWith('data:image/')) throw new Error('Photo data was not produced.');
+      // Store the compressed image directly in state. This is intentionally used
+      // for the iPhone prototype because it is more reliable than IndexedDB Blob
+      // storage on some Safari/iOS configurations.
+      it.photos.push({
+        id, src, description:'', location:'',
+        format:state.meta.photoFormat||'A6',
+        orientation:state.meta.photoOrientation||'auto',
+        width:result.width||0, height:result.height||0, blobStored:false
+      });
+    }
+    await saveNow(false);
+    const box=document.getElementById('photos-'+itemId);
+    if(box)box.innerHTML=await renderPhotoEditors(it);
+    updateReferenceSuggestion(itemId);
+  }catch(err){
+    console.error('Item photograph error:',err);
+    alert('Photograph could not be added. '+(err&&err.message?err.message:'Please try again or select a different image.'));
+  }
+}
+async function updatePhoto(itemId,index,key,value){
+  const it=state.items[itemId];
+  if(!it || !it.photos[index])return;
+  it.photos[index][key]=value;
+  saveStateQuiet();
+}
+
+async function deletePhoto(itemId,index){
+  const it=state.items[itemId];
+  if(!it || !it.photos[index])return;
+  if(!confirm('Delete this photograph?'))return;
+  const p=it.photos[index];
+  try{await deletePhotoBlob(p.id)}catch(e){console.warn('Photo delete failed',e)}
+  releaseURL(p.id);
+  it.photos.splice(index,1);
+  await saveNow(false);
+  const box=document.getElementById('photos-'+itemId);
+  if(box)box.innerHTML=await renderPhotoEditors(it);
+}
+
+/* ---------- UI ---------- */
+function showPage(page){
+  currentPage=String(page);
+  document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",String(b.dataset.page)===String(page)));
+  if(page==="cover") renderCover();
+  else if(page==="reference-library") renderReferenceLibrary();
+  else if(page==="review") renderReview();
+  else renderSection(Number(page));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function getSectionStatus(s){
+  const forced=state.sectionStatus?.[String(s.no)];
+  if(forced==='N/A') return {type:'na',symbol:'N/A',label:'N/A'};
+  const items=s.items.map(x=>state.items[x[0]]).filter(Boolean).filter(it=>it.disabled!==true);
+  const assessed=items.filter(it=>it.status);
+  if(items.length===0) return {type:'done',symbol:'✓',label:'Completed'};
+  if(assessed.length===0) return {type:'none',symbol:'—',label:'Not started'};
+  if(assessed.length===items.length) return {type:'done',symbol:'✓',label:'Completed'};
+  return {type:'attention',symbol:'⚠',label:'Attention'};
+}
+function renderSectionStatusSummary(){
+  const total=checklist.length;
+  let completed=0,attention=0,none=0,na=0;
+  checklist.forEach(s=>{const st=getSectionStatus(s); if(st.type==='done')completed++; else if(st.type==='attention')attention++; else if(st.type==='none')none++; else if(st.type==='na')na++;});
+  const el=document.getElementById('navSummary');
+  if(el) el.innerHTML=`<div><b>Sections completed:</b> ${completed} / ${total}</div><div><b>Attention required:</b> ${attention}</div><div><b>Not started:</b> ${none}</div><div><b>N/A:</b> ${na}</div>`;
+}
+function updateProgress(){
+  const all=Object.values(state.items||{});
+  const applicable=checklist.flatMap(s=>s.items.map(x=>state.items[x[0]])).filter(Boolean).filter(it=>it.disabled!==true).filter(it=>getSectionStatus(checklist.find(s=>s.items.some(x=>x[0]===it.id)))?.type!=='na');
+  const assessed=applicable.filter(it=>it.status).length;
+  const total=applicable.length;
+  const bar=document.getElementById('progressBar'); if(bar) bar.style.width=(total?Math.round(assessed/total*100):0)+'%';
+  const txt=document.getElementById('progressText'); if(txt) txt.textContent=`${assessed} / ${total} items assessed`;
+  renderNavStatuses();
+}
+function renderNavStatuses(){
+  checklist.forEach(s=>{
+    const b=document.querySelector(`.navbtn[data-page="${s.no}"]`);
+    if(!b)return;
+    const st=getSectionStatus(s);
+    b.innerHTML=`<span class="navbtn-inner"><span class="navbtn-label">${s.no}. ${escapeHTML(s.title)}</span><span class="nav-section-state ${st.type}" title="${st.label}">${st.symbol}</span></span>`;
+  });
+  renderSectionStatusSummary();
+}
+function renderNav(){
+  document.getElementById("navSections").innerHTML=checklist.map(s=>
+    `<button class="navbtn" data-page="${s.no}" onclick="showPage('${s.no}')"><span class="navbtn-inner"><span class="navbtn-label">${s.no}. ${escapeHTML(s.title)}</span><span class="nav-section-state none">—</span></span></button>`
+  ).join("");
+  document.getElementById("navReferenceLibrary").classList.remove("hidden");
+  renderNavStatuses();
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest(".navbtn[data-page]");
+  if(!b)return;
+  const page=b.dataset.page;
+  if(page!==undefined){e.preventDefault();showPage(page);}
+});
+
+function field(label,key,type="text"){
+  return `<div class="field"><label>${label}</label><input type="${type}" value="${escapeHTML(state.meta[key])}" oninput="state.meta.${key}=this.value;saveStateQuiet()"></div>`;
+}
+async function renderCover(){
+  const m=state.meta;
+  let vesselImg="";
+  if(m.vesselPhoto?.id) vesselImg=await photoURL(m.vesselPhoto.id);
+  document.getElementById("screen").innerHTML=`
+  <div class="card">
+    <h2>Cover / Summary</h2>
+    <div class="grid3">
+      ${field("Vessel Name","vesselName")}${field("IMO Number","imo")}
+      ${field("Port of Registry","portOfRegistry")}${field("Ship Type","shipType")}
+      ${field("Flag","flag")}${field("Classification Society","classSociety")}
+      ${field("Registered Owner","registeredOwner")}${field("Technical Manager","technicalManager")}
+      ${field("Shipbuilder","shipbuilder")}${field("Delivery Date","deliveryDate","date")}
+      ${field("Deadweight","dwt")}${field("Gross Tonnage","gt")}${field("Net Tonnage","nt")}
+      ${field("Length Overall","loa")}${field("Breadth","breadth")}${field("Depth","depth")}
+      ${field("Summer Draught","summerDraught")}${field("Master","master")}
+      ${field("Chief Officer","chiefOfficer")}${field("Chief Engineer","chiefEngineer")}
+      ${field("2nd Engineer","secondEngineer")}${field("Crew Nationality","crewNationality")}
+      ${field("Inspection Port","inspectionPort")}${field("Inspection Date","inspectionDate","date")}
+      ${field("Inspector","inspector")}${field("Inspection Status","status")}
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Inspection Description / Conclusion</h3>
+    <div class="field"><label>Description</label><textarea oninput="state.meta.auditDescription=this.value;saveStateQuiet()">${escapeHTML(m.auditDescription)}</textarea></div>
+    <div class="field" style="margin-top:10px"><label>Conclusion</label><textarea oninput="state.meta.conclusion=this.value;saveStateQuiet()">${escapeHTML(m.conclusion)}</textarea></div>
+  </div>
+
+  <div class="card">
+    <h3>Vessel Photo</h3>
+    <div class="photo-toolbar no-print">
+      <button class="btn" onclick="document.getElementById('coverPhotoInput').click()">Take Photo / Add Photo</button>
+      ${m.vesselPhoto?`<button class="btn" onclick="removeVesselPhoto()">Remove</button>`:""}
+    </div>
+    <div class="grid2 no-print" style="margin-top:10px">
+      <div class="field"><label>Printed Photo Format</label><select onchange="state.meta.coverPhotoFormat=this.value;saveStateQuiet();renderCover()"><option value="A5" ${m.coverPhotoFormat==='A5'||!m.coverPhotoFormat?'selected':''}>A5</option></select></div>
+      <div class="field"><label>Photo Orientation</label><select onchange="state.meta.coverPhotoOrientation=this.value;saveStateQuiet();renderCover()"><option value="auto" ${(!m.coverPhotoOrientation||m.coverPhotoOrientation==='auto')?'selected':''}>Auto</option><option value="portrait" ${m.coverPhotoOrientation==='portrait'?'selected':''}>Portrait</option><option value="landscape" ${m.coverPhotoOrientation==='landscape'?'selected':''}>Landscape</option></select></div>
+    </div>
+    <div class="small no-print" style="margin-top:6px">A5 photo. Auto orientation follows the photograph aspect ratio; Portrait / Landscape can be selected manually.</div>
+    ${vesselImg?`<div class="cover-photo"><img src="${vesselImg}" alt="Vessel photograph"></div>`:"<div class='small'>No vessel photo selected.</div>"}
+  </div>
+`;
+}
+async function removeVesselPhoto(){
+  if(state.meta.vesselPhoto?.id) await deletePhotoBlob(state.meta.vesselPhoto.id);
+  state.meta.vesselPhoto=null;saveStateQuiet();renderCover();
+}
+function applyPhotoDefaults(){
+  Object.values(state.items).forEach(it=>it.photos.forEach(p=>{
+    p.format=state.meta.photoFormat;p.orientation=state.meta.photoOrientation;
+  }));
+  saveStateQuiet();
+}
+
+async function renderSection(no){
+  const s=checklist.find(x=>x.no===no);if(!s)return;
+  const isNA=state.sectionStatus?.[String(s.no)]==='N/A';
+  let html=`<div class="card"><div class="section-head"><div class="section-no">SECTION ${s.no}</div><div style="flex:1"><h2>${escapeHTML(s.title)}</h2><div class="small">Inspector Guidance is visible during inspection and is excluded from the PDF report.</div></div><div class="section-control"><label>Section</label><select onchange="setSectionStatus('${s.no}',this.value)"><option value="ACTIVE" ${!isNA?'selected':''}>ACTIVE</option><option value="N/A" ${isNA?'selected':''}>N/A</option></select></div></div>`;
+  if(isNA){
+    html+=`<div class="section-na-notice"><b>Section marked N/A.</b> This section is not applicable to this vessel and will be excluded from the final PDF report. Existing item data is preserved.</div></div>`;
+    document.getElementById("screen").innerHTML=html; return;
+  }
+  s.items.forEach(x=>html+=renderItem(state.items[x[0]]));
+  html+=`</div>`;
+  document.getElementById("screen").innerHTML=html;
+  for(const x of s.items){
+    const it=state.items[x[0]];
+    if(it.photos.length){ const box=document.getElementById("photos-"+it.id); if(box) box.innerHTML=await renderPhotoEditors(it); }
+    updateReferenceSuggestion(it.id);
+  }
+}
+function setSectionStatus(no,value){
+  if(!state.sectionStatus) state.sectionStatus={};
+  if(value==='N/A') state.sectionStatus[String(no)]='N/A'; else delete state.sectionStatus[String(no)];
+  updateProgress(); saveStateQuiet(); renderSection(Number(no));
+}
+function renderItem(it){
+  it.disabled=it.disabled===true;
+  if(!Array.isArray(it.findings)) it.findings=[String(it.comments||"")];
+  if(!it.findings.length) it.findings=[String(it.comments||"")];
+  if(!Array.isArray(it.recommendations)||!it.recommendations.length){
+    it.recommendations=[{reference:String(it.reference||""),status:String(it.recommendationStatus||"OPEN"),action:String(it.action||""),completion:String(it.completion||"")}];
+  }
+  const finding=String(it.comments ?? it.findings.filter(v=>String(v||'').trim()).join("\n\n") ?? "");
+  if(it.disabled){
+    return `<div class="item" id="item-${it.id}">
+      <div class="item-head">
+        <div class="item-id">${escapeHTML(it.id)}</div>
+        <div class="item-title">${escapeHTML(it.text)}</div>
+        <div class="field" style="margin:0;min-width:135px"><label>Item</label><select onchange="setItemDisabled('${it.id}',this.value)"><option value="ACTIVE">ACTIVE</option><option value="N/A" selected>N/A</option></select></div>
+      </div>
+      <div class="item-body"><div class="section-na-notice"><b>Item marked N/A.</b> This inspection item is not applicable to this vessel and will be excluded from the final PDF report. Existing item data is preserved.</div></div>
+    </div>`;
+  }
+  const recsHTML=it.recommendations.map((r,i)=>`<div class="recommendation-card" style="border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:10px;background:#fafafa">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px"><strong>Recommendation ${i+1}</strong>${it.recommendations.length>1?`<button type="button" class="btn danger" style="padding:6px 9px" onclick="removeRecommendation('${it.id}',${i})">Delete</button>`:""}</div>
+      <div class="item-fields">
+        <div class="field"><label>Reference</label><div style="display:flex;gap:6px;align-items:flex-start"><input id="recommendation-reference-${it.id}-${i}" style="flex:1" value="${escapeHTML(r.reference||"")}" oninput="updateRecommendation('${it.id}',${i},'reference',this.value)" placeholder="e.g. SOLAS Ch. III Reg. 20.6"><button type="button" class="btn" onclick="detectRecommendationReferenceNow('${it.id}',${i})">Detect</button></div><div id="recommendation-reference-suggestion-${it.id}-${i}" class="reference-suggestion"></div></div>
+        <div class="field"><label>Recommendation Status</label><select onchange="updateRecommendation('${it.id}',${i},'status',this.value)">${["OPEN","COMPLETED","COMPLETED DURING INSPECTION","RECOMMENDATION"].map(v=>`<option value="${v}" ${r.status===v?"selected":""}>${v}</option>`).join("")}</select></div>
+        <div class="field full"><label>Recommended Corrective Action</label><textarea oninput="updateRecommendation('${it.id}',${i},'action',this.value)">${escapeHTML(r.action||"")}</textarea></div>
+        <div class="field full"><label>Completion / Verification Remarks</label><textarea oninput="updateRecommendation('${it.id}',${i},'completion',this.value)">${escapeHTML(r.completion||"")}</textarea></div>
+      </div>
+    </div>`).join("");
+  return `<div class="item" id="item-${it.id}">
+    <div class="item-head">
+      <div class="item-id">${escapeHTML(it.id)}</div>
+      <div class="item-title">${escapeHTML(it.text)}</div>
+      <div class="field" style="margin:0;min-width:135px"><label>Item</label><select onchange="setItemDisabled('${it.id}',this.value)"><option value="ACTIVE" selected>ACTIVE</option><option value="N/A">N/A</option></select></div>
+      <select class="status" onchange="updateItem('${it.id}','status',this.value)">
+        <option value="">Not assessed</option><option value="Satisfactory" ${it.status==="Satisfactory"?"selected":""}>Satisfactory</option><option value="Observation" ${it.status==="Observation"?"selected":""}>Observation</option><option value="Deficiency" ${it.status==="Deficiency"?"selected":""}>Deficiency</option><option value="N/A" ${it.status==="N/A"?"selected":""}>N/A</option>
+      </select>
+    </div>
+    <div class="item-body">
+      <div class="guidance"><b>Inspector Guidance:</b><br>${escapeHTML(it.guidance)}</div>
+      <div class="item-fields">
+        <div class="field full"><label>Finding / Comment</label><textarea oninput="updateFinding('${it.id}',this.value)" placeholder="Inspector's finding / comment for this item">${escapeHTML(finding)}</textarea></div>
+        <div class="field full"><label>Recommendations</label>${recsHTML}<button type="button" class="btn" style="margin-top:10px" onclick="addRecommendation('${it.id}')">+ Add Recommendation</button></div>
+      </div>
+      <div class="photo-toolbar no-print"><button class="btn" onclick="triggerItemPhoto('${it.id}',false)">Add Photos</button><button class="btn" onclick="triggerItemPhoto('${it.id}',true)">Take Photo</button><input id="photoInput-${it.id}" class="hidden" type="file" accept="image/*" multiple></div>
+      <div id="photos-${it.id}">${it.photos.length?`<div class="small">Loading photographs…</div>`:""}</div>
+    </div>
+  </div>`;
+}
+function syncLegacyRecommendationFields(it){
+  const r=it.recommendations?.[0];
+  if(r){it.reference=r.reference||"";it.action=r.action||"";it.recommendationStatus=r.status||"OPEN";it.completion=r.completion||"";}
+}
+function updateFinding(id,value){const it=state.items[id];if(!it)return;it.comments=String(value??"");it.findings=[it.comments];updateProgress();updateReferenceSuggestion(id);saveStateQuiet();}
+function ensureRecommendations(it){if(!Array.isArray(it.recommendations)||!it.recommendations.length)it.recommendations=[{reference:String(it.reference||""),status:String(it.recommendationStatus||"OPEN"),action:String(it.action||""),completion:String(it.completion||"")}];}
+function updateRecommendation(id,index,key,value){const it=state.items[id];if(!it)return;ensureRecommendations(it);if(!it.recommendations[index])return;it.recommendations[index][key]=value;if(index===0)syncLegacyRecommendationFields(it);saveStateQuiet();}
+function addRecommendation(id){const it=state.items[id];if(!it)return;ensureRecommendations(it);it.recommendations.push({reference:"",status:"OPEN",action:"",completion:""});saveStateQuiet();const s=checklist.find(sec=>sec.items.some(x=>x[0]===id));if(s)renderSection(s.no);}
+function removeRecommendation(id,index){const it=state.items[id];if(!it)return;ensureRecommendations(it);if(it.recommendations.length<=1)return;if(!confirm("Delete this recommendation?"))return;it.recommendations.splice(index,1);syncLegacyRecommendationFields(it);saveStateQuiet();const s=checklist.find(sec=>sec.items.some(x=>x[0]===id));if(s)renderSection(s.no);}
+function detectRecommendationReferenceNow(id,index){
+  const it=state.items[id];if(!it)return;ensureRecommendations(it);
+  const matches=findReferenceMatches(it);const m=matches[0];
+  if(m){it.recommendations[index].reference=m.reference||"";if(index===0)syncLegacyRecommendationFields(it);saveStateQuiet();const el=document.getElementById(`recommendation-reference-${id}-${index}`);if(el)el.value=it.recommendations[index].reference;const box=document.getElementById(`recommendation-reference-suggestion-${id}-${index}`);if(box)box.innerHTML=`Suggested reference: <b>${escapeHTML(m.reference||"")}</b>`;}
+  else alert("No matching reference found in the Reference Library.");
+}
+function setItemDisabled(id,value){
+  const it=state.items[id];if(!it)return;
+  it.disabled=(value==='N/A');
+  updateProgress();saveStateQuiet();
+  const sec=checklist.find(sec=>sec.items.some(x=>x[0]===id));
+  if(sec)renderSection(sec.no);
+}
+function updateItem(id,key,val){
+  state.items[id][key]=val;
+  if(key==='comments'){state.items[id].findings=[String(val||'')];}
+  if(['reference','action','recommendationStatus','completion'].includes(key)){
+    ensureRecommendations(state.items[id]);
+    const map={reference:'reference',action:'action',recommendationStatus:'status',completion:'completion'};
+    state.items[id].recommendations[0][map[key]]=val;
+  }
+  updateProgress();
+  if(key==='status'||key==='comments'||key==='reference') updateReferenceSuggestion(id);
+  saveStateQuiet();
+}
+
+async function renderPhotoEditors(it){
+  if(!it.photos.length)return "";
+  let html=`<div class="photos-edit">`;
+  for(let i=0;i<it.photos.length;i++){
+    const p=it.photos[i],u=await photoURL(p.id);
+    html+=`<div class="photo-edit">
+      ${u?`<img src="${u}">`:`<div class="small">Photo file not available.</div>`}
+      <div class="photo-meta">
+        <input value="${escapeHTML(p.description||"")}" placeholder="Description" oninput="updatePhoto('${it.id}',${i},'description',this.value)">
+        <select onchange="updatePhoto('${it.id}',${i},'format',this.value)">
+          <option value="A5" ${p.format==="A5"?"selected":""}>A5 — 2/page</option>
+          <option value="A6" ${p.format==="A6"?"selected":""}>A6 — 4/page</option>
+        </select>
+        <select onchange="updatePhoto('${it.id}',${i},'orientation',this.value)">
+          <option value="auto" ${p.orientation==="auto"?"selected":""}>Auto</option>
+          <option value="portrait" ${p.orientation==="portrait"?"selected":""}>Vertical / Portrait</option>
+          <option value="landscape" ${p.orientation==="landscape"?"selected":""}>Horizontal / Landscape</option>
+        </select>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="small">Photo No. ${i+1}</span>
+          <button class="btn" onclick="deletePhoto('${it.id}',${i})">Delete</button>
+        </div>
+      </div>
+    </div>`;
+  }
+  return html+"</div>";
+}
+function normalizeReferenceText(v){
+  return String(v||"").toLowerCase()
+    .replace(/&/g," and ")
+    .replace(/[^a-z0-9а-яё\s.-]/gi," ")
+    .replace(/\s+/g," ").trim();
+}
+function csvTerms(v){return String(v||"").split(",").map(normalizeReferenceText).filter(x=>x.length>=2)}
+function csvIds(v){return String(v||"").split(",").map(x=>String(x).trim()).filter(Boolean)}
+function getReferenceLibrary(){
+  try{
+    const raw=localStorage.getItem(REFERENCE_LIBRARY_KEY);
+    if(raw){const parsed=JSON.parse(raw);if(Array.isArray(parsed)&&parsed.length)return parsed;}
+  }catch(e){console.warn("Reference Library read failed",e)}
+  return JSON.parse(JSON.stringify(DEFAULT_REFERENCE_LIBRARY));
+}
+function saveReferenceLibrary(lib){try{localStorage.setItem(REFERENCE_LIBRARY_KEY,JSON.stringify(lib));return true}catch(e){console.warn("Reference Library save failed",e);return false}}
+function referenceTermMatch(hay,term){
+  if(!hay||!term)return false;
+  if(term.includes(" ")) return hay.includes(term);
+  try{return new RegExp("(^|\\s)"+term.replace(/[.*+?^${}()|[\\]\\]/g,"\\$&")+"(?=\\s|$)","i").test(hay)}catch(e){return hay.includes(term)}
+}
+function getItemSectionId(item){
+  const found=checklist.find(s=>s.items.some(x=>x[0]===item.id));
+  return found?String(found.no):"";
+}
+function scoreReferenceEntry(entry,item){
+  const comments=normalizeReferenceText(item.comments), itemText=normalizeReferenceText(item.text), sectionId=getItemSectionId(item);
+  if(!(comments||itemText))return {score:0,matches:[],excluded:false};
+  const exclusions=csvTerms(entry.exclusionKeywords);
+  if(exclusions.some(t=>referenceTermMatch(comments,t)))return {score:-999,matches:[],excluded:true};
+  let score=Number(entry.priority)||0, matches=[];
+  const sections=csvIds(entry.sectionIds), items=csvIds(entry.itemIds);
+  if(items.includes(String(item.id)))score+=40;
+  if(sections.includes(sectionId))score+=15;
+  for(const term of csvTerms(entry.keywords)){
+    const inC=referenceTermMatch(comments,term), inI=referenceTermMatch(itemText,term);
+    if(inC){const n=term.split(" ").length;score+=n>=3?25:n===2?15:8;matches.push(term)}
+    else if(inI){score+=nudge=3;}
+  }
+  return {score,matches,excluded:false};
+}
+function findReferenceMatches(it){
+  if(!it||!(it.status==="Observation"||it.status==="Deficiency"))return [];
+  if(normalizeReferenceText(it.comments).length<3)return [];
+  return getReferenceLibrary().map(e=>{const r=scoreReferenceEntry(e,it);return Object.assign({},e,r)}).filter(x=>x.score>0&&!x.excluded).sort((a,b)=>b.score-a.score).slice(0,5);
+}
+function referenceSuggestionHTML(id,matches,it){
+  if(!matches.length)return '<span>No confident library match found. Enter the applicable reference manually or refine the library.</span>';
+  const best=matches[0], second=matches[1], confident=best.score>=35 && (!second || best.score-second.score>=8);
+  const matchText=best.matches.slice(0,5).join(", ")||"section/item context";
+  return `<strong>${confident&&!it.reference?"Auto-detected":"Suggested by Reference Library"}:</strong> ${escapeHTML(best.reference)} <span class="reference-match">Score: ${Math.round(best.score)}; matched: ${escapeHTML(matchText)}</span> <button type="button" class="btn" style="padding:4px 7px;margin-left:6px" onclick="applyReferenceSuggestion('${id}')">Use</button>`;
+}
+function updateReferenceSuggestion(id){
+  const it=state.items[id],box=document.getElementById("reference-suggestion-"+id);if(!box||!it)return;
+  if(!(it.status==="Observation"||it.status==="Deficiency")){box.innerHTML="";return}
+  const matches=findReferenceMatches(it),best=matches[0],second=matches[1];
+  if(!matches.length){box.innerHTML=referenceSuggestionHTML(id,[],it);return}
+  const confident=best.score>=35 && (!second||best.score-second.score>=8);
+  if(!it.reference&&confident){it.reference=best.reference;const input=document.getElementById("reference-"+id);if(input)input.value=best.reference;box.innerHTML=referenceSuggestionHTML(id,matches,it);saveStateQuiet();return}
+  box.innerHTML=referenceSuggestionHTML(id,matches,it);
+}
+function applyReferenceSuggestion(id){const it=state.items[id];if(!it)return;const m=findReferenceMatches(it)[0];if(!m)return;it.reference=m.reference;const input=document.getElementById("reference-"+id);if(input)input.value=m.reference;saveStateQuiet();updateReferenceSuggestion(id)}
+function detectReferenceNow(id){
+  const it=state.items[id];if(!it||!(it.status==="Observation"||it.status==="Deficiency")){alert("Set Status to Observation or Deficiency first.");return}
+  const m=findReferenceMatches(it)[0];if(!m){alert("No Reference Library match was found from Comments / Findings.");updateReferenceSuggestion(id);return}
+  it.reference=m.reference;const input=document.getElementById("reference-"+id);if(input)input.value=m.reference;saveStateQuiet();updateReferenceSuggestion(id)
+}
+function renderReferenceLibrary(){
+  const lib=getReferenceLibrary();
+  document.getElementById("screen").innerHTML=`<div class="card">
+    <div class="section-head"><div class="section-no">LIBRARY</div><div><h2>Reference Library</h2><div class="small">Professional matching matrix: Section / Item + Keywords + Exclusion Keywords + Reference + Priority.</div></div></div>
+    <div class="notice">Automatic reference detection is applied only to Observation and Deficiency items. The highest-scoring applicable rule is selected; exclusion keywords can block an otherwise matching rule. Manual Reference entries are never overwritten automatically.</div>
+    <div class="reference-library-toolbar">
+      <button class="btn primary" onclick="addReferenceLibraryEntry()">Add Reference</button>
+      <button class="btn" onclick="resetReferenceLibrary()">Restore Default Library</button>
+      <button class="btn" onclick="testReferenceLibrary()">Test Current Findings</button>
+    </div>
+    <div class="small" style="margin-bottom:12px">Section IDs: 1–10. Item IDs can be entered as comma-separated checklist item IDs. Priority: higher number = stronger base priority.</div>
+    <div id="referenceLibraryList">${lib.map(renderReferenceLibraryEntry).join("")}</div>
+  </div>`;
+}
+function renderReferenceLibraryEntry(e,i){
+  return `<div class="reference-library-entry" data-ref-index="${i}">
+    <div class="ref-head">
+      <div class="field"><label>Reference</label><input value="${escapeHTML(e.reference||"")}" oninput="updateReferenceLibraryEntry(${i},'reference',this.value)"></div>
+      <div class="field"><label>Keywords</label><textarea placeholder="comma-separated terms" oninput="updateReferenceLibraryEntry(${i},'keywords',this.value)">${escapeHTML(e.keywords||"")}</textarea></div>
+      <button class="btn danger" onclick="deleteReferenceLibraryEntry(${i})">Delete</button>
+    </div>
+    <div class="grid3" style="margin-top:8px">
+      <div class="field"><label>Section IDs</label><input value="${escapeHTML(e.sectionIds||"")}" placeholder="e.g. 4,6,7" oninput="updateReferenceLibraryEntry(${i},'sectionIds',this.value)"></div>
+      <div class="field"><label>Item IDs</label><input value="${escapeHTML(e.itemIds||"")}" placeholder="e.g. 4.2, 7.5" oninput="updateReferenceLibraryEntry(${i},'itemIds',this.value)"></div>
+      <div class="field"><label>Priority</label><input type="number" min="0" max="999" value="${Number(e.priority)||0}" oninput="updateReferenceLibraryEntry(${i},'priority',Number(this.value)||0)"></div>
+    </div>
+    <div class="field" style="margin-top:8px"><label>Exclusion Keywords</label><textarea placeholder="comma-separated terms that block this rule" oninput="updateReferenceLibraryEntry(${i},'exclusionKeywords',this.value)">${escapeHTML(e.exclusionKeywords||"")}</textarea></div>
+    <div class="small">ID: ${escapeHTML(e.id||"")}</div>
+  </div>`;
+}
+function updateReferenceLibraryEntry(i,key,value){const lib=getReferenceLibrary();if(!lib[i])return;lib[i][key]=value;saveReferenceLibrary(lib)}
+function addReferenceLibraryEntry(){const lib=getReferenceLibrary();lib.push({id:"custom-"+Date.now(),sectionIds:"",itemIds:"",keywords:"",exclusionKeywords:"",reference:"NEW REFERENCE",priority:50});saveReferenceLibrary(lib);renderReferenceLibrary()}
+function deleteReferenceLibraryEntry(i){const lib=getReferenceLibrary();if(!lib[i])return;if(!confirm("Delete this Reference Library entry?"))return;lib.splice(i,1);saveReferenceLibrary(lib);renderReferenceLibrary()}
+function resetReferenceLibrary(){if(!confirm("Restore the default Reference Library? Custom entries will be removed."))return;saveReferenceLibrary(JSON.parse(JSON.stringify(DEFAULT_REFERENCE_LIBRARY)));renderReferenceLibrary()}
+function testReferenceLibrary(){
+  const rows=Object.values(state.items).filter(x=>x.disabled!==true&& (x.status==="Observation"||x.status==="Deficiency")).map(it=>{const m=findReferenceMatches(it)[0];return `${it.id}: ${m?m.reference:"NO MATCH"}`});
+  alert(rows.length?rows.join("\\n"):"No Observation / Deficiency items currently recorded.");
+}
+function itemSectionIsNA(itemId){
+  const s=checklist.find(sec=>sec.items.some(x=>x[0]===itemId));
+  return !!s && state.sectionStatus?.[String(s.no)]==='N/A';
+}
+function itemIsDisabled(itemId){
+  return state.items?.[itemId]?.disabled===true;
+}
+function renderReview(){
+  const recRows=[];
+  Object.values(state.items).forEach(it=>{
+    if(itemSectionIsNA(it.id)||itemIsDisabled(it.id))return;
+    const recs=Array.isArray(it.recommendations)&&it.recommendations.length?it.recommendations:[{reference:it.reference||"",status:it.recommendationStatus||"OPEN",action:it.action||"",completion:it.completion||""}];
+    if(!(it.status==="Observation"||it.status==="Deficiency"||recs.some(r=>r.status==="RECOMMENDATION"||r.reference||r.action||r.completion)))return;
+    recs.forEach((r,ri)=>recRows.push({it,r,ri}));
+  });
+  document.getElementById("screen").innerHTML=`
+  <div class="card">
+    <h2>Final Review / Recommendations</h2>
+    <div class="notice">Each inspection item has one Finding / Comment and may contain multiple separate Recommendations.</div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>No.</th><th>Section / Item</th><th>Finding / Observation</th><th>Reference</th><th>Recommended Corrective Action</th><th>Status</th><th>Completion / Verification</th></tr></thead>
+      <tbody>${recRows.map((x,i)=>`<tr><td>${i+1}</td><td>${escapeHTML(x.it.id)} — ${escapeHTML(x.it.text)}<br><span class="small">Recommendation ${x.ri+1}</span></td><td>${escapeHTML(x.it.comments||"")}</td><td>${escapeHTML(x.r.reference||"")}</td><td>${escapeHTML(x.r.action||"")}</td><td>${escapeHTML(x.r.status||"")}</td><td>${escapeHTML(x.r.completion||"")}</td></tr>`).join("")||`<tr><td colspan="7">No Observation / Deficiency / Recommendation items recorded.</td></tr>`}</tbody>
+    </table></div>
+  </div>`;
+}
+
+/* ---------- PDF / print ---------- */
+async function buildPrintReport(){
+  const m=state.meta||{};
+  const allItems=Object.values(state.items||{}).filter(x=>!itemSectionIsNA(x.id)&&!itemIsDisabled(x.id));
+  const assessed=allItems.filter(x=>x.status);
+  const satisfactory=allItems.filter(x=>x.status==='Satisfactory');
+  const observations=allItems.filter(x=>x.status==='Observation');
+  const deficiencies=allItems.filter(x=>x.status==='Deficiency');
+  const naItems=allItems.filter(x=>x.status==='N/A');
+  const recommendations=allItems.filter(x=>x.status==='Observation'||x.status==='Deficiency'||x.recommendationStatus==='RECOMMENDATION');
+  let totalPhotoCount=0;
+  for(const s of checklist) {
+    if(state.sectionStatus?.[String(s.no)]==='N/A') continue;
+    for(const x of s.items){ const it=state.items[x[0]]; if(it&&Array.isArray(it.photos)) totalPhotoCount+=it.photos.length; }
+  }
+
+  /*
+    Safari/WebKit does not reliably repeat fixed-position elements or a tfoot
+    used as a global print footer. Therefore the report is deliberately built
+    as a sequence of self-contained A4 pages. Every page contains its own
+    header and footer, including the page number. This is reliable in Safari,
+    Chrome and Edge and keeps the report fully offline.
+  */
+  const pageHeader=()=>`<div class="report-page-header"><div class="report-header-name">INTERCREWING LTD</div></div>`;
+  const pageFooter=(pageNo)=>`<div class="report-page-footer">
+    <div class="report-footer-left">
+      <div class="report-footer-code">002 QHSE&nbsp;&nbsp;&nbsp;&nbsp;Rev. 0/Jun-2026</div>
+      <div class="report-footer-note">The form is used for QHSE shipboard audit.</div>
+    </div>
+    <div class="report-footer-page">Page ${pageNo}</div>
+  </div>`;
+  const makePage=(body,options={})=>{
+    const noHeader=options.noHeader===true;
+    return `<div class="report-page${noHeader?' cover-report-page':''}">${noHeader?'':pageHeader()}<div class="report-page-body">${body}</div>${pageFooter('__PAGE__')}</div>`;
+  };
+
+  const pages=[];
+
+  /* ---------- Page 1: Inspection Summary ---------- */
+  const coverOrientation=((m.coverPhotoOrientation||'auto')==='portrait'?'portrait':((m.coverPhotoOrientation||'auto')==='landscape'?'landscape':((m.vesselPhoto?.width||0)>=(m.vesselPhoto?.height||0)?'landscape':'portrait')));
+  const coverPhotoHTML=m.vesselPhoto?.id
+    ? `<div class="inspection-summary-photo ${coverOrientation}"><img src="${await photoURL(m.vesselPhoto.id)}" alt="Vessel photograph"></div>`
+    : `<div class="inspection-summary-photo"><div class="inspection-summary-photo-empty">No vessel photograph available.</div></div>`;
+  pages.push(makePage(`<div class="inspection-summary-cover">
+    <div class="inspection-summary-title">INSPECTION SUMMARY</div>
+    <div class="inspection-summary-top">
+      ${coverPhotoHTML}
+      <div class="inspection-summary-facts">
+        <div class="summary-fact"><span class="summary-fact-label">VESSEL</span><span class="summary-fact-value">${escapeHTML(m.vesselName||'')}</span></div>
+        <div class="summary-fact"><span class="summary-fact-label">DATE OF INSPECTION</span><span class="summary-fact-value">${escapeHTML(m.inspectionDate||'')}</span></div>
+        <div class="summary-fact"><span class="summary-fact-label">PORT OF INSPECTION</span><span class="summary-fact-value">${escapeHTML(m.inspectionPort||'')}</span></div>
+      </div>
+    </div>
+    <div class="inspection-summary-lower">
+      <div class="summary-text-block">
+        <div class="summary-text-heading"><span>DESCRIPTION OF THE AUDIT</span></div>
+        <div class="summary-text">${escapeHTML(m.auditDescription||'')}</div>
+      </div>
+      <div class="summary-text-block">
+        <div class="summary-text-heading"><span>CONCLUSION</span></div>
+        <div class="summary-text">${escapeHTML(m.conclusion||'')}</div>
+      </div>
+    </div>
+  </div>`,{noHeader:true}));
+
+  /* ---------- Page 2: Vessel & Crew Information ---------- */
+  pages.push(makePage(`<div class="vessel-crew-info-page">
+    <div class="report-page-title">VESSEL &amp; CREW INFORMATION</div>
+
+    <div class="info-block">
+      <div class="info-block-title">VESSEL INFORMATION</div>
+      <table class="info-table vessel-info-table"><tbody>
+        <tr><th>Vessel Name</th><td>${escapeHTML(m.vesselName||'')}</td></tr>
+        <tr><th>IMO Number</th><td>${escapeHTML(m.imo||'')}</td></tr>
+        <tr><th>Ship Type</th><td>${escapeHTML(m.shipType||'')}</td></tr>
+        <tr><th>Flag</th><td>${escapeHTML(m.flag||'')}</td></tr>
+        <tr><th>Port of Registry</th><td>${escapeHTML(m.portOfRegistry||'')}</td></tr>
+        <tr><th>Classification Society</th><td>${escapeHTML(m.classSociety||'')}</td></tr>
+        <tr><th>Registered Owner</th><td>${escapeHTML(m.registeredOwner||'')}</td></tr>
+        <tr><th>Technical Manager</th><td>${escapeHTML(m.technicalManager||'')}</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="info-block">
+      <div class="info-block-title">SHIP PARTICULARS</div>
+      <table class="info-table particulars-table"><tbody>
+        <tr><th>Shipbuilder</th><td>${escapeHTML(m.shipbuilder||'')}</td><th>Delivery Date</th><td>${escapeHTML(m.deliveryDate||'')}</td></tr>
+        <tr><th>Deadweight (DWT)</th><td>${escapeHTML(m.dwt||'')}</td><th>Gross Tonnage</th><td>${escapeHTML(m.gt||'')}</td></tr>
+        <tr><th>Net Tonnage</th><td>${escapeHTML(m.nt||'')}</td><th>Length Overall (LOA)</th><td>${escapeHTML(m.loa||'')}</td></tr>
+        <tr><th>Breadth</th><td>${escapeHTML(m.breadth||'')}</td><th>Depth</th><td>${escapeHTML(m.depth||'')}</td></tr>
+        <tr><th>Summer Draught</th><td>${escapeHTML(m.summerDraught||'')}</td><th></th><td></td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="info-block">
+      <div class="info-block-title">CREW INFORMATION</div>
+      <table class="info-table crew-table"><thead><tr><th>POSITION</th><th>NAME</th></tr></thead><tbody>
+        <tr><th>Master</th><td>${escapeHTML(m.master||'')}</td></tr>
+        <tr><th>Chief Officer</th><td>${escapeHTML(m.chiefOfficer||'')}</td></tr>
+        <tr><th>Chief Engineer</th><td>${escapeHTML(m.chiefEngineer||'')}</td></tr>
+        <tr><th>2nd Engineer</th><td>${escapeHTML(m.secondEngineer||'')}</td></tr>
+        <tr><th>Crew Nationality</th><td>${escapeHTML(m.crewNationality||'')}</td></tr>
+      </tbody></table>
+    </div>
+  </div>`));
+
+  const positions={
+    A5:[['5mm','12mm','200mm','136mm'],['5mm','150mm','200mm','136mm']],
+    A6:[['5mm','12mm','97.5mm','136mm'],['107.5mm','12mm','97.5mm','136mm'],['5mm','150mm','97.5mm','136mm'],['107.5mm','150mm','97.5mm','136mm']]
+  };
+  let pno=1;
+
+  /* Estimate row height so long comments do not create an oversized page.
+     The estimate is intentionally conservative for 11 pt report text. */
+  const rowWeight=(it)=>{
+    const recText=(it?.recommendations||[]).map(r=>[r.reference,r.action,r.status,r.completion].filter(Boolean).join(' ')).join(' ');
+    const text=[it?.text,it?.comments,recText].filter(Boolean).join(' ');
+    return Math.max(1,Math.ceil(text.length/150));
+  };
+
+  /* ---------- Sections: checklist page(s), then that section's photographs ---------- */
+  for(const s of checklist){
+    if(state.sectionStatus?.[String(s.no)]==='N/A') continue;
+    const rows=s.items.filter(x=>!itemIsDisabled(x[0])).map(x=>{
+      const it=state.items[x[0]]||{};
+      const commentParts=[];
+      if(it.status) commentParts.push(`<strong>Status:</strong> ${escapeHTML(it.status)}`);
+      if(String(it.comments||'').trim()) commentParts.push(`<strong>Finding / Comment:</strong> ${escapeHTML(it.comments)}`);
+      const recs=Array.isArray(it.recommendations)&&it.recommendations.length?it.recommendations:[];
+      recs.forEach((r,i)=>{
+        const parts=[];
+        if(String(r.reference||'').trim()) parts.push(`<strong>Reference:</strong> ${escapeHTML(r.reference)}`);
+        if(String(r.status||'').trim()) parts.push(`<strong>Recommendation Status:</strong> ${escapeHTML(r.status)}`);
+        if(String(r.action||'').trim()) parts.push(`<strong>Recommended Corrective Action:</strong> ${escapeHTML(r.action)}`);
+        if(String(r.completion||'').trim()) parts.push(`<strong>Completion / Verification Remarks:</strong> ${escapeHTML(r.completion)}`);
+        if(parts.length) commentParts.push(`<strong>Recommendation ${i+1}</strong><br>${parts.join('<br>')}`);
+      });
+      return {html:`<tr><td>${escapeHTML(it.id||x[0])}</td><td>${escapeHTML(it.text||x[1]||'')}</td><td>${commentParts.join('<br><br>')}</td></tr>`,weight:rowWeight(it)};
+    });
+
+    let batch=[];
+    let weight=0;
+    const flushSectionPage=()=>{
+      if(!batch.length)return;
+      pages.push(makePage(`<div class="section-print section-page">
+        <div class="print-section-header"><h2>SECTION ${s.no} — ${escapeHTML(s.title)}</h2></div>
+        <table class="print-table section-checklist-table"><thead><tr>
+          <th>N</th><th>Item</th><th>Comments or/and Findings (reference for recommendation, observation, defect, NCR etc. if applicable)</th>
+        </tr></thead><tbody>${batch.map(r=>r.html).join('')}</tbody></table>
+      </div>`));
+      batch=[]; weight=0;
+    };
+    for(const r of rows){
+      if(batch.length && weight+r.weight>12) flushSectionPage();
+      batch.push(r); weight+=r.weight;
+    }
+    flushSectionPage();
+
+    const photos=[];
+    for(const x of s.items){
+      const it=state.items[x[0]];
+      if(!it||it.disabled===true||!Array.isArray(it.photos)) continue;
+      for(const p of it.photos){
+        const u=await photoURL(p.id);
+        if(u) photos.push({...p,src:u,sectionNo:s.no,sectionTitle:s.title,itemId:it.id,itemText:it.text});
+      }
+    }
+
+    let pi=0;
+    while(pi<photos.length){
+      const fmt=photos[pi].format==='A5'?'A5':'A6';
+      const per=fmt==='A5'?2:4;
+      let end=pi;
+      while(end<photos.length && (photos[end].format==='A5'?'A5':'A6')===fmt && end-pi<per) end++;
+      const chunk=photos.slice(pi,end);
+      pages.push(makePage(`<div class="section-photo-block"><div class="photo-sheet ${fmt.toLowerCase()}">${chunk.map((p,j)=>{
+        const q=positions[fmt][j], n=pno+j;
+        return `<div class="photo-card-abs" style="left:${q[0]};top:${q[1]};width:${q[2]};height:${q[3]};">
+          <div class="photo-image-abs"><img src="${p.src}" alt="Photo ${n}"></div>
+          <div class="photo-caption-abs"><strong>Photo No.:</strong> ${n}<br><strong>Section:</strong> ${escapeHTML(p.sectionNo||'')}. ${escapeHTML(p.sectionTitle||'')}<br><strong>Item:</strong> ${escapeHTML(p.itemId||'')} — ${escapeHTML(p.itemText||'')}<br><strong>Description:</strong> ${escapeHTML(p.description||'')}</div>
+        </div>`;
+      }).join('')}</div></div>`));
+      pno+=chunk.length;
+      pi=end;
+    }
+  }
+
+  /* ---------- Final findings / recommendations ---------- */
+  if(recommendations.length){
+    let batch=[];
+    let weight=0;
+    const flushRecPage=()=>{
+      if(!batch.length)return;
+      pages.push(makePage(`<div class="section-print section-page final-recommendations-page">
+        <div class="print-section-header"><h2>FINAL FINDINGS &amp; RECOMMENDATIONS</h2></div>
+        <table class="print-table final-recommendations-table"><thead><tr><th>No.</th><th>Section / Item</th><th>Finding / Observation</th><th>Reference</th><th>Recommended Corrective Action</th><th>Status</th><th>Completion / Verification</th></tr></thead><tbody>${batch.map(x=>x.html).join('')}</tbody></table>
+      </div>`));
+      batch=[]; weight=0;
+    };
+    let recNo=0;
+    recommendations.forEach((it)=>{
+      const recs=Array.isArray(it.recommendations)&&it.recommendations.length?it.recommendations:[{reference:it.reference||"",status:it.recommendationStatus||"OPEN",action:it.action||"",completion:it.completion||""}];
+      recs.forEach((r,ri)=>{
+        recNo++;
+        const finding=String(it.comments||'');
+        const text=[it.id,it.text,finding,r.reference,r.action,r.status,r.completion].filter(Boolean).join(' ');
+        const weightThis=Math.max(1,Math.ceil(text.length/120));
+        const row={weight:weightThis,html:`<tr><td>${recNo}</td><td><strong>${escapeHTML(it.id||'')}</strong><br>${escapeHTML(it.text||'')}<br><span style="font-size:9pt">Recommendation ${ri+1}</span></td><td>${escapeHTML(finding)}</td><td>${escapeHTML(r.reference||'')}</td><td>${escapeHTML(r.action||'')}</td><td>${escapeHTML(r.status||'')}</td><td>${escapeHTML(r.completion||'')}</td></tr>`};
+        if(batch.length && weight+row.weight>7) flushRecPage();
+        batch.push(row); weight+=row.weight;
+      });
+    });
+    flushRecPage();
+  }else{
+    pages.push(makePage(`<div class="section-print section-page final-recommendations-page">
+      <div class="print-section-header"><h2>FINAL FINDINGS &amp; RECOMMENDATIONS</h2></div>
+      <table class="print-table final-recommendations-table"><thead><tr><th>No.</th><th>Section / Item</th><th>Finding / Observation</th><th>Reference</th><th>Recommended Corrective Action</th><th>Status</th><th>Completion / Verification</th></tr></thead><tbody><tr><td colspan="7">No Observation / Deficiency / Recommendation items recorded.</td></tr></tbody></table>
+    </div>`));
+  }
+
+  const totalPages=pages.length;
+  return `<div>${pages.map((page,i)=>page.replace('Page __PAGE__',`Page ${i+1} of ${totalPages}`)).join('')}</div>`;
+}
+
+async function printReport(){
+  try{
+    if(!state || !state.meta){
+      alert('Start or load an inspection before creating the report.');
+      return;
+    }
+    await saveNow(false);
+    const report=await buildPrintReport();
+    const el=document.getElementById('printReport');
+    el.innerHTML=report;
+    el.classList.add('print-ready');
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    window.print();
+  }catch(err){
+    console.error('Print report error:',err);
+    alert('The report could not be generated. Check the browser console for details.');
+  }
+}
+
+/* ---------- JSON export/import ---------- */
+async function blobToDataURL(blob){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(blob);
+  });
+}
+async function exportJSON(){
+  const out=JSON.parse(JSON.stringify(state));
+  out.referenceLibrary=getReferenceLibrary();
+  for(const it of Object.values(out.items)){
+    for(const p of it.photos){
+      const blob=await getPhotoBlob(p.id);
+      if(blob)p.src=await blobToDataURL(blob);
+      delete p.blobStored;
+    }
+  }
+  if(out.meta.vesselPhoto?.id){
+    const blob=await getPhotoBlob(out.meta.vesselPhoto.id);
+    if(blob)out.meta.vesselPhoto.src=await blobToDataURL(blob);
+    delete out.meta.vesselPhoto.blobStored;
+  }
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=(state.meta.vesselName||"inspection").replace(/[^\w\-]+/g,"_")+"_inspection.json";
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+document.getElementById("importInput").addEventListener("change",async e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=async()=>{
+    try{
+      const imported=JSON.parse(r.result);
+      if(Array.isArray(imported.referenceLibrary)) saveReferenceLibrary(imported.referenceLibrary);
+      delete imported.referenceLibrary;
+      state=await migrate(imported);
+      initItems();await saveNow(false);startApp();
+      alert("Inspection imported. Photographs were stored separately in IndexedDB.");
+    }catch(err){console.error(err);alert("Invalid inspection JSON or photograph data.");}
+  };
+  r.readAsText(f);e.target.value="";
+});
+
+/* ---------- Cover camera ---------- */
+document.getElementById("coverPhotoInput").addEventListener("change",async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{
+    let result=await compressImage(f);
+    const id=uid();
+    try{await putPhotoOptimized(id,result.blob)}catch(firstErr){
+      result=await compressImage(f,900,.42);
+      await putPhotoOptimized(id,result.blob);
+    }
+    if(state.meta.vesselPhoto?.id)await deletePhotoBlob(state.meta.vesselPhoto.id);
+    state.meta.vesselPhoto={id,width:result.width,height:result.height,blobStored:true};
+    await saveNow(false);await renderCover();
+  }catch(err){alert("Vessel photograph could not be stored.");}
+  e.target.value="";
+});
+
+/* ---------- Start / reset ---------- */
+async function newInspection(){
+  const startName=(document.getElementById("startVesselName")?.value||"").trim();
+  if(!confirm("Start a new inspection? The currently saved inspection data and ALL photographs will be permanently deleted from this browser."))return;
+  try{
+    await clearInspectionStorage();
+  }catch(e){
+    alert("The previous inspection could not be cleared completely. A new inspection was not started.");
+    return;
+  }
+  state={
+    meta:Object.assign({},{
+      vesselName:"",imo:"",portOfRegistry:"",shipType:"",flag:"",classSociety:"",
+      registeredOwner:"",technicalManager:"",shipbuilder:"",deliveryDate:"",
+      dwt:"",gt:"",nt:"",loa:"",breadth:"",depth:"",summerDraught:"",
+      master:"",chiefOfficer:"",chiefEngineer:"",secondEngineer:"",crewNationality:"",
+      inspectionPort:"",inspectionDate:new Date().toISOString().slice(0,10),
+      inspector:"",status:"",auditDescription:"",conclusion:"",
+      vesselPhoto:null,coverPhotoFormat:"A5",coverPhotoOrientation:"auto",photoFormat:"A6",photoOrientation:"auto"
+    }),
+    sectionStatus:{},
+    items:{}
+  };
+  state.meta.vesselName=startName;
+  initItems();
+  await saveNow(false);
+  startApp();
+}
+function loadDemo(){
+  state={meta:{
+    vesselName:"MV DEMO BULKER",imo:"1234567",portOfRegistry:"Demo Registry",
+    shipType:"Bulk Carrier",flag:"Demo Flag",classSociety:"Demo Class",
+    inspectionPort:"Demo Port",inspectionDate:new Date().toISOString().slice(0,10),
+    inspector:"Inspector",status:"Draft",vesselPhoto:null,photoFormat:"A6",photoOrientation:"auto"
+  },sectionStatus:{},items:{}};
+  initItems();
+  state.items["2.3"].status="Observation";
+  state.items["2.3"].comments="Sample observation — verify route checking and safety settings.";
+  state.items["2.3"].reference="SOLAS Ch. V";
+  state.items["5.2"].status="Deficiency";
+  state.items["5.2"].comments="Sample deficiency.";
+  state.items["5.2"].action="Rectify and verify mooring equipment condition.";
+  saveNow(false);
+  startApp();
+}
+function startApp(){
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  renderNav();updateProgress();showPage("cover");
+}
+async function resetInspection(){
+  if(!confirm("Reset the current inspection? All inspection data and photographs will be deleted from browser storage."))return;
+  await clearInspectionStorage();
+  location.reload();
+}
+
+(async function boot(){
+  const loaded=await loadState();
+  if(loaded)startApp();
+})();
+
+
+window.addEventListener("pagehide",()=>{
+  if(saveTimer||saveInProgress){
+    clearTimeout(saveTimer);
+    saveTimer=null;
+    saveNow(false);
+  }
+});
+
+/* ---------- iPhone / PWA offline readiness ---------- */
+function setOfflineStatus(mode,text){
+  const el=document.getElementById("offlineStatus");
+  if(!el)return;
+  el.className="offline-status "+(mode||"");
+  el.textContent=text;
+}
+async function requestPersistentStorage(){
+  try{
+    if(navigator.storage && navigator.storage.persist){
+      const granted=await navigator.storage.persist();
+      if(granted) console.info("Persistent browser storage granted.");
+    }
+  }catch(e){console.warn("Persistent storage request failed",e)}
+}
+async function updateOfflineStatus(){
+  const online=navigator.onLine;
+  if(!online){
+    setOfflineStatus("offline","OFFLINE — local data active");
+    return;
+  }
+  if("serviceWorker" in navigator){
+    try{
+      const reg=await navigator.serviceWorker.ready;
+      const controlled=!!navigator.serviceWorker.controller;
+      if(controlled || reg.active){
+        setOfflineStatus("ready","ONLINE — offline mode ready");
+      }else{
+        setOfflineStatus("online","ONLINE — preparing offline mode");
+      }
+    }catch(e){setOfflineStatus("online","ONLINE")}
+  }else{
+    setOfflineStatus("online","ONLINE — PWA unavailable")
+  }
+}
+window.addEventListener("online",updateOfflineStatus);
+window.addEventListener("offline",updateOfflineStatus);
+window.addEventListener("pageshow",()=>{updateOfflineStatus();requestPersistentStorage()});
+if("serviceWorker" in navigator && location.protocol !== "file:"){
+  window.addEventListener("load",async()=>{
+    try{
+      const reg=await navigator.serviceWorker.register("./sw.js",{scope:"./",updateViaCache:"none"});
+      await navigator.serviceWorker.ready;
+      await requestPersistentStorage();
+      updateOfflineStatus();
+      reg.update().catch(()=>{});
+    }catch(err){
+      console.warn("Service worker registration failed",err);
+      setOfflineStatus(navigator.onLine?"online":"offline",navigator.onLine?"ONLINE — offline cache unavailable":"OFFLINE — local data active");
+    }
+  });
+}
+
+</script>
+</body>
+</html>
